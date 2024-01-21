@@ -1,0 +1,158 @@
+<style>
+	dt:has(+dd:empty) {
+		opacity: .5;
+		&+dd::after {
+			opacity: .5;
+			content:'n/a';
+		}
+	}
+</style>
+<!--	TODO: allow just battle id, or name?	-->
+<label><span>Posit Battol URL Here: </span><input type="url" id="battle-url" placeholder="https://battleofthebits.com/arena/Battle/1234/MainScreen/EXAMPLE" /></label>
+<img src="" id="battle-cover-art" />
+<dl>
+	<div id="battle-site"><dt>Site</dt><dd></dd></div>
+	<!--	TODO: subtypes - OHB and 2HB and 4HB are all XHB - also majors and minors etc	-->
+	<div id="battle-type"><dt>Type</dt><dd></dd></div>
+	<div id="battle-id"><dt>ID</dt><dd></dd></div>
+	<!--	TODO: handle multiple hosts	-->
+	<div id="battle-hosts"><dt>Host(s)</dt><dd></dd></div>
+	<div id="battle-title"><dt>Title</dt><dd></dd></div>
+	<!--	TODO: handle multiple formats	-->
+	<div id="battle-formats"><dt>Format(s)</dt><dd></dd></div>	
+	<!--	TODO: break out start / end elements into more granular segments	-->
+	<div id="battle-start"><dt>Start</dt><dd></dd></div>
+	<div id="battle-end"><dt>End</dt><dd></dd></div>
+</dl>
+<label><span>Folder Name: </span><input type="text" id="folder-name" readonly size="50" placeholder="no battle data loaded..." /></label>
+<script>
+	const APIBattleTypeLabels = [
+		//	TODO: test + verify values
+		'DUEL?',
+		'MAJOR?',
+		'MINOR?',
+		'XHB',
+	]
+	
+	const APIBase = 'https://battleofthebits.com/api/v1/';
+	const APIBattleURL = (id)=>`${APIBase}battle/load/${id}`;
+	const APIUserURL = (id)=>`${APIBase}botbr/load/${id}`;
+	const urlInputEl = document.querySelector('#battle-url');
+	const siteEl = document.querySelector('#battle-site');
+	const typeEl = document.querySelector('#battle-type');
+	const formatsEl = document.querySelector('#battle-formats');
+	const hostsEl = document.querySelector('#battle-hosts');
+	const botbIdEl = document.querySelector('#battle-botb-id');
+	const idEl = document.querySelector('#battle-id');
+	const titleEl = document.querySelector('#battle-title');
+	const startEl = document.querySelector('#battle-start');
+	const endEl = document.querySelector('#battle-end');
+	const folderNameEl = document.querySelector('#folder-name');
+	const coverArtEl = document.querySelector('#battle-cover-art');
+	
+	function generateFolderFromState(){
+		return `${state.site} ${state.type} #${state.id} ${state.title}`;
+	}
+	
+	async function fetchBattleById(id){
+		state.dataReady = false;
+		const fetchBattle = await fetch(APIBattleURL(id));
+		const responseJSON = await fetchBattle.json();
+		console.table(responseJSON)
+		if(responseJSON.response_type === 'FAIL'){
+			console.error('fetchBattleById failed:', responseJSON.response_message);
+			return;
+		}
+		state.type = APIBattleTypeLabels[responseJSON.type];	//	TODO: get real values for this enum
+		state.formats = responseJSON.format_tokens;	//	TODO: handle multiple formats
+		state.format = responseJSON.format_tokens[0];	//	hack, for now
+		state.hostID = responseJSON.botbr_id	//	TODO:	subsequent fetches for user names	
+		state.title = responseJSON.title;
+		state.start = responseJSON.start;
+		state.end = responseJSON.end;
+		state.dataReady = true;
+	}
+	
+	const stateDefaults = {
+		url:undefined,
+		site:'BotB',
+		type:undefined,
+		formats:undefined,
+		hosts:undefined,
+		id:undefined,
+		title:undefined,
+		art:undefined,
+		dataReady:undefined,
+	}
+	const state = new Proxy({
+		...stateDefaults,
+		init() {
+			//	trigger setter hooks on default values
+			Object.entries(stateDefaults).forEach(([key, value])=>state[key] = value);
+		},
+	},{
+		set(obj, prop, value) {
+			console.log(prop, obj[prop], '->', value);
+			  //	view updates
+			switch(prop){
+				case 'url':
+					console.log(value);
+					if(value && obj[prop] !== value){
+						state.id = value.match(/Battle\/(\d+)\//).pop();
+					}
+				break;
+				case 'site':
+					siteEl.querySelector('dd').textContent = value;
+				break;
+				case 'type':
+					typeEl.querySelector('dd').textContent = value;
+				break;
+				case 'formats':
+					formatsEl.querySelector('dd').textContent = value;
+				break;
+				case 'hosts':
+					hostsEl.querySelector('dd').textContent = value;
+				break;
+				case 'id':
+					idEl.querySelector('dd').textContent = value;
+						//	TODO: handle already fetching
+					fetchBattleById(value);
+				break;
+				case 'botb-id':
+					botbIdEl.querySelector('dd').textContent = value;
+				break;
+				case 'title':
+					titleEl.querySelector('dd').textContent = value;
+				break;
+				case 'start':
+					startEl.querySelector('dd').textContent = value;
+				break;
+				case 'end':
+					endEl.querySelector('dd').textContent = value;
+				break;
+				case 'art':
+					coverArtEl.src = value ?? '';
+				break;
+				case 'dataReady':
+					if(value === true){
+						folderNameEl.value = generateFolderFromState();
+					};
+				break;
+				default:
+					//	not a watched prop
+				break;
+			}
+			obj[prop] = value;
+			return true;
+		},
+	});
+	state.init();
+	
+	async function onChangeBattleURL(event){
+		if(event.target.value){	//	TODO: additional validation for provided url
+			state.url = event.target.value;
+		}
+	}
+	urlInputEl.addEventListener('change', onChangeBattleURL);
+	urlInputEl.dispatchEvent(new CustomEvent('change'));
+</script>
