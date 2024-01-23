@@ -6,17 +6,25 @@
 			content:'n/a';
 		}
 	}
+	#error-message {
+		color: red;
+		&:empty {
+			display:none;
+		}
+	}
 </style>
 <!--	TODO: allow just battle id, or name?	-->
-<label><span>Posit Battol URL Here: </span><input type="url" id="battle-url" placeholder="https://battleofthebits.com/arena/Battle/1234/MainScreen/EXAMPLE" /></label>
-<img src="" id="battle-cover-art" />
+<label><span>Posit Battol URL: </span><input type="url" id="battle-url" placeholder="https://battleofthebits.com/arena/Battle/1234/MainScreen/EXAMPLE" size="100" autofocus /></label>
+<p id="error-message"></p>
+<br />
+<img id="host-avatar" width="150" />
+<img id="battle-cover-art"  width="150" />
 <dl>
 	<div id="battle-site"><dt>Site</dt><dd></dd></div>
 	<!--	TODO: subtypes - OHB and 2HB and 4HB are all XHB - also majors and minors etc	-->
 	<div id="battle-type"><dt>Type</dt><dd></dd></div>
 	<div id="battle-id"><dt>ID</dt><dd></dd></div>
-	<!--	TODO: handle multiple hosts	-->
-	<div id="battle-hosts"><dt>Host(s)</dt><dd></dd></div>
+	<div id="battle-host"><dt>Host</dt><dd></dd></div>
 	<div id="battle-title"><dt>Title</dt><dd></dd></div>
 	<!--	TODO: handle multiple formats	-->
 	<div id="battle-formats"><dt>Format(s)</dt><dd></dd></div>	
@@ -24,81 +32,161 @@
 	<div id="battle-start"><dt>Start</dt><dd></dd></div>
 	<div id="battle-end"><dt>End</dt><dd></dd></div>
 </dl>
+<ul>
+	<li><label><input type="checkbox" checked /><span> allow emoji 💯</span></label></li>
+	<li><label><input type="checkbox" /><span> convert spaces to underscores</span></label></li>
+	<li><label><input type="checkbox" /><span> strip non alpha numerics (except underscores)</span></label></li>
+</ul>
+<!--	TODO: customize folder name generation scheme	-->
 <label><span>Folder Name: </span><input type="text" id="folder-name" readonly size="50" placeholder="no battle data loaded..." /></label>
+<script src="mini-debounce.js"></script>
 <script>
 	const APIBattleTypeLabels = [
 		//	TODO: test + verify values
-		'DUEL?',
-		'MAJOR?',
-		'MINOR?',
+		'MAJOR',
+		'CAMPAIGN',
+		'UNKNOWN_2',
 		'XHB',
+		'UNKNOWN_4',
 	]
 	
-	const APIBase = 'https://battleofthebits.com/api/v1/';
+		//	TODO: this fails if the trailing slash is missing, as in:
+		//	https://battleofthebits.com/arena/Battle/1
+	const matchBattleId = /Battle\/(\d+)\//;
+	function getBattleIdFromURL(url){
+		return (url.match(matchBattleId) ?? []).pop();
+	}
+	
+		//	TODO: implement folder name transformation options -
+	
+	const matchNonAlphaNumerics = /[^0-9a-zA-Z_]/g;
+	function stripNonAlphaNumerics(string){
+		return string.replaceAll(matchNonAlphaNumerics,'');
+	}
+	
+	const matchEmoji = /\p{RGI_Emoji}/gv;
+	function stripEmoji(string){
+		return string.replaceAll(matchEmoji,'');
+	}
+	
+	function replaceSpacesWithUnderscore(string){
+		return string.replaceAll(' ','_');
+	}
+	
+	const APIDomain = 'https://battleofthebits.com/'
+	const APIBase = `${APIDomain}api/v1/`;
 	const APIBattleURL = (id)=>`${APIBase}battle/load/${id}`;
 	const APIUserURL = (id)=>`${APIBase}botbr/load/${id}`;
+	const getAvatarURL = (avatarURL)=>`${APIDomain}${avatarURL}`;
+	
+	//	TODO: it'd be nice if there was a way to get these refs automagically
+	
 	const urlInputEl = document.querySelector('#battle-url');
+	const errorMessageEl = document.querySelector('#error-message');
 	const siteEl = document.querySelector('#battle-site');
 	const typeEl = document.querySelector('#battle-type');
 	const formatsEl = document.querySelector('#battle-formats');
-	const hostsEl = document.querySelector('#battle-hosts');
+	const hostEl = document.querySelector('#battle-host');
 	const botbIdEl = document.querySelector('#battle-botb-id');
 	const idEl = document.querySelector('#battle-id');
 	const titleEl = document.querySelector('#battle-title');
 	const startEl = document.querySelector('#battle-start');
 	const endEl = document.querySelector('#battle-end');
 	const folderNameEl = document.querySelector('#folder-name');
+	const hostAvatarEl = document.querySelector('#host-avatar');
 	const coverArtEl = document.querySelector('#battle-cover-art');
 	
+		//	TODO: arguments to customize final folder name string
+	
 	function generateFolderFromState(){
-		return `${state.site} ${state.type} #${state.id} ${state.title}`;
+		return `${state.site} ${state.type} #${state.id} ${state.title} (${state.formats.join(', ')})`;
+	}
+	
+	function setErrorMessage(message){
+		errorMessageEl.textContent = message;
+	}
+	
+		//	TODO: DRY these API request methods out
+	
+	async function fetchUserById(id) {
+		state.userDataReady = false;
+		const response = await fetch(APIUserURL(id));
+		const responseJSON = await response.json();
+		console.table(responseJSON)
+		if(responseJSON.response_type === 'FAIL'){
+			setErrorMessage(`Fetching user #${id} failed! Server says: "${responseJSON.response_message}"`)
+			return;
+		}
+		state.host = responseJSON.name;
+		state.hostAvatar = responseJSON.avatar_url;
+		state.hostURL = responseJSON.profile_url;
+		state.userDataReady = true;
 	}
 	
 	async function fetchBattleById(id){
-		state.dataReady = false;
-		const fetchBattle = await fetch(APIBattleURL(id));
-		const responseJSON = await fetchBattle.json();
+		state.battleDataReady = false;
+		const response = await fetch(APIBattleURL(id));
+		const responseJSON = await response.json();
 		console.table(responseJSON)
 		if(responseJSON.response_type === 'FAIL'){
-			console.error('fetchBattleById failed:', responseJSON.response_message);
+			setErrorMessage(`Fetching battle #${id} failed! Server says: "${responseJSON.response_message}"`)
+			//	TODO: clear old data if fetch fails?
 			return;
 		}
 		state.type = APIBattleTypeLabels[responseJSON.type];	//	TODO: get real values for this enum
 		state.formats = responseJSON.format_tokens;	//	TODO: handle multiple formats
 		state.format = responseJSON.format_tokens[0];	//	hack, for now
-		state.hostID = responseJSON.botbr_id	//	TODO:	subsequent fetches for user names	
+		state.coverArt = responseJSON.cover_art_url;
+			//	TODO: multiple hosts? might take an API update
+		state.hostID = responseJSON.botbr_id;
 		state.title = responseJSON.title;
 		state.start = responseJSON.start;
 		state.end = responseJSON.end;
-		state.dataReady = true;
+		
+		await fetchUserById(responseJSON.botbr_id);	//	TODO: too much chain of async callbacks
+		
+		state.battleDataReady = true;
 	}
 	
 	const stateDefaults = {
+		//	TODO: would it be crazy to init these values from html?
 		url:undefined,
 		site:'BotB',
 		type:undefined,
 		formats:undefined,
-		hosts:undefined,
+		host:undefined,
 		id:undefined,
 		title:undefined,
-		art:undefined,
-		dataReady:undefined,
+		coverArt:undefined,
+		hostAvatar:undefined,
+		battleDataReady:undefined,
+		botbrDataReady:undefined,
 	}
 	const state = new Proxy({
 		...stateDefaults,
 		init() {
-			//	trigger setter hooks on default values
+			//	hack? to trigger setter hooks on default values
 			Object.entries(stateDefaults).forEach(([key, value])=>state[key] = value);
 		},
 	},{
 		set(obj, prop, value) {
+			//	TODO: any benefit to dedupe?
 			console.log(prop, obj[prop], '->', value);
-			  //	view updates
 			switch(prop){
 				case 'url':
 					console.log(value);
-					if(value && obj[prop] !== value){
-						state.id = value.match(/Battle\/(\d+)\//).pop();
+					if(value === ''){
+						setErrorMessage('');
+					}else if(value && obj[prop] !== value){
+						const battleId = (value.match(matchBattleId) ?? []).pop();
+						state.id = battleId;
+							//	TODO: handle already fetching
+						if(battleId){
+							setErrorMessage();
+							fetchBattleById(battleId);
+						}else{
+							setErrorMessage('Invalid battle URL');
+						}
 					}
 				break;
 				case 'site':
@@ -110,13 +198,11 @@
 				case 'formats':
 					formatsEl.querySelector('dd').textContent = value;
 				break;
-				case 'hosts':
-					hostsEl.querySelector('dd').textContent = value;
+				case 'host':
+					hostEl.querySelector('dd').textContent = value;
 				break;
 				case 'id':
 					idEl.querySelector('dd').textContent = value;
-						//	TODO: handle already fetching
-					fetchBattleById(value);
 				break;
 				case 'botb-id':
 					botbIdEl.querySelector('dd').textContent = value;
@@ -130,16 +216,20 @@
 				case 'end':
 					endEl.querySelector('dd').textContent = value;
 				break;
-				case 'art':
+				case 'coverArt':
 					coverArtEl.src = value ?? '';
 				break;
-				case 'dataReady':
+				case 'hostAvatar':
+					hostAvatarEl.src = value ? getAvatarURL(value) : '';
+				break;
+				case 'battleDataReady':
 					if(value === true){
 						folderNameEl.value = generateFolderFromState();
 					};
 				break;
 				default:
-					//	not a watched prop
+					//	therefore not a watched prop
+					//	edit: or I spelled something wrong
 				break;
 			}
 			obj[prop] = value;
@@ -149,10 +239,13 @@
 	state.init();
 	
 	async function onChangeBattleURL(event){
-		if(event.target.value){	//	TODO: additional validation for provided url
+		console.log(event);
+		//	TODO: validate url here?
 			state.url = event.target.value;
-		}
 	}
+	
+	//	urlInputEl.pattern = matchBattleId;	//	TODO: test html input pattern stuff more?
 	urlInputEl.addEventListener('change', onChangeBattleURL);
 	urlInputEl.dispatchEvent(new CustomEvent('change'));
+	urlInputEl.addEventListener('input', debounce(onChangeBattleURL, 700));
 </script>
