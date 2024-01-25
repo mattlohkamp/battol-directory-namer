@@ -13,6 +13,8 @@
 		}
 	}
 </style>
+<!--	TODO: populate list of current battles, periodically refresh? or notify of stale data?	-->
+<ol id="current-battles"></ol>
 <!--	TODO: allow just battle id, or name?	-->
 <label><span>Posit Battol URL: </span><input type="url" id="battle-url" placeholder="https://battleofthebits.com/arena/Battle/1234/MainScreen/EXAMPLE" size="100" autofocus /></label>
 <p id="error-message"></p>
@@ -20,27 +22,49 @@
 <img id="host-avatar" width="150" />
 <img id="battle-cover-art"  width="150" />
 <dl>
-	<div id="battle-site"><dt>Site</dt><dd></dd></div>
-	<!--	TODO: subtypes - OHB and 2HB and 4HB are all XHB - also majors and minors etc	-->
+	<div id="battle-site"><dt>Site</dt><dd>BotB</dd></div>
 	<div id="battle-type"><dt>Type</dt><dd></dd></div>
+	<div id="battle-subtype"><dt>Subtype</dt><dd></dd></div>
 	<div id="battle-id"><dt>ID</dt><dd></dd></div>
 	<div id="battle-host"><dt>Host</dt><dd></dd></div>
 	<div id="battle-title"><dt>Title</dt><dd></dd></div>
-	<!--	TODO: handle multiple formats	-->
 	<div id="battle-formats"><dt>Format(s)</dt><dd></dd></div>	
 	<!--	TODO: break out start / end elements into more granular segments	-->
 	<div id="battle-start"><dt>Start</dt><dd></dd></div>
 	<div id="battle-end"><dt>End</dt><dd></dd></div>
 </dl>
-<ul>
-	<li><label><input type="checkbox" checked /><span> allow emoji 💯</span></label></li>
-	<li><label><input type="checkbox" /><span> convert spaces to underscores</span></label></li>
-	<li><label><input type="checkbox" /><span> strip non alpha numerics (except underscores)</span></label></li>
+<ul id="options">
+	<li><label><input type="checkbox" id="option-emoji" checked /><span> allow emoji 💯</span></label></li>
+	<li><label><input type="checkbox" id="option-underscores" /><span> convert spaces to underscores</span></label></li>
+	<li><label><input type="checkbox" id="option-alphanumeric" /><span> strip non alpha numerics (except underscores)</span></label></li>
+	<!--	TODO: datestamp formatting options	-->
 </ul>
 <!--	TODO: customize folder name generation scheme	-->
+<select id="folder-name-tokens" multiple>
+    <option>Site</option>
+    <option>Type</option>
+	<option>Subtype</option>
+    <option>ID</option>
+	<option>Host</option>
+	<option>Title</option>
+	<option>Format(s)</option>
+	<option>Start</option>
+	<option>End</option>
+</select>
 <label><span>Folder Name: </span><input type="text" id="folder-name" readonly size="50" placeholder="no battle data loaded..." /></label>
 <script src="mini-debounce.js"></script>
 <script>
+
+		//	double-dipping these feels hacky, I miss typescript enums
+
+	const BATTLE_TYPE = {
+		MAJOR:0,
+		CAMPAIGN:1,
+		UNKNOWN_2:2,
+		XHB:3,
+		UNKNOWN_4:4,
+	}
+
 	const APIBattleTypeLabels = [
 		//	TODO: test + verify values
 		'MAJOR',
@@ -49,6 +73,25 @@
 		'XHB',
 		'UNKNOWN_4',
 	]
+	
+	const MILISECONDS_PER_SECOND = 1000;
+	const SECONDS_PER_MINUTE = 60;
+	const MINTUES_PER_HOUR = 60;
+	const HOURS_PER_DAY = 24;
+	
+	const MILISECONDS_PER_HOUR = MINTUES_PER_HOUR * SECONDS_PER_MINUTE * MILISECONDS_PER_SECOND;
+	
+	const MILISECONDS_PER_DAY = HOURS_PER_DAY * MILISECONDS_PER_HOUR;
+	
+	function getXHBSubtypeByDate(start,end,useOfor1 = true) {
+			//	TODO: explain this hackery
+		const durationMs = (new Date(end) - new Date(start)) - MILISECONDS_PER_DAY;
+		if(durationMs === 1 * MILISECONDS_PER_HOUR){
+			return `${useOfor1 ? 'O' : '1'}HB`;
+		}else{
+			return `${durationMs / MILISECONDS_PER_HOUR}HB`;
+		}
+	}
 	
 		//	TODO: this fails if the trailing slash is missing, as in:
 		//	https://battleofthebits.com/arena/Battle/1
@@ -59,11 +102,6 @@
 	
 		//	TODO: implement folder name transformation options -
 	
-	const matchNonAlphaNumerics = /[^0-9a-zA-Z_]/g;
-	function stripNonAlphaNumerics(string){
-		return string.replaceAll(matchNonAlphaNumerics,'');
-	}
-	
 	const matchEmoji = /\p{RGI_Emoji}/gv;
 	function stripEmoji(string){
 		return string.replaceAll(matchEmoji,'');
@@ -71,6 +109,11 @@
 	
 	function replaceSpacesWithUnderscore(string){
 		return string.replaceAll(' ','_');
+	}
+	
+	const matchNonAlphaNumerics = /[^0-9a-zA-Z_]/g;
+	function stripNonAlphaNumerics(string){
+		return string.replaceAll(matchNonAlphaNumerics,'');
 	}
 	
 	const APIDomain = 'https://battleofthebits.com/'
@@ -83,8 +126,10 @@
 	
 	const urlInputEl = document.querySelector('#battle-url');
 	const errorMessageEl = document.querySelector('#error-message');
+	
 	const siteEl = document.querySelector('#battle-site');
 	const typeEl = document.querySelector('#battle-type');
+	const subtypeEl = document.querySelector('#battle-subtype');
 	const formatsEl = document.querySelector('#battle-formats');
 	const hostEl = document.querySelector('#battle-host');
 	const botbIdEl = document.querySelector('#battle-botb-id');
@@ -92,14 +137,31 @@
 	const titleEl = document.querySelector('#battle-title');
 	const startEl = document.querySelector('#battle-start');
 	const endEl = document.querySelector('#battle-end');
+	
 	const folderNameEl = document.querySelector('#folder-name');
+	
 	const hostAvatarEl = document.querySelector('#host-avatar');
 	const coverArtEl = document.querySelector('#battle-cover-art');
 	
+	//	const optionsEl = document.querySelector('#options');
+	const optionEmojiEl = document.querySelector('#option-emoji');
+	const optionUnderscoresEl = document.querySelector('#option-underscores');
+	const optionAlphanumericEl = document.querySelector('#option-alphanumeric');
+	
 		//	TODO: arguments to customize final folder name string
 	
-	function generateFolderFromState(){
-		return `${state.site} ${state.type} #${state.id} ${state.title} (${state.formats.join(', ')})`;
+	function generateFolderName(state){
+		let folderName = `${state.site} ${state.subtype} #${state.id} ${state.title} (${state.formats.join(', ')})`;
+		if(state['option-emoji'] === false){
+			folderName = stripEmoji(folderName);
+		}
+		if(state['option-underscores'] === true){
+			folderName = replaceSpacesWithUnderscore(folderName);
+		}
+		if(state['option-alphanumeric'] === true){
+			folderName = stripNonAlphaNumerics(folderName);
+		}
+		return folderName;
 	}
 	
 	function setErrorMessage(message){
@@ -112,7 +174,7 @@
 		state.userDataReady = false;
 		const response = await fetch(APIUserURL(id));
 		const responseJSON = await response.json();
-		console.table(responseJSON)
+		//	console.table(responseJSON)
 		if(responseJSON.response_type === 'FAIL'){
 			setErrorMessage(`Fetching user #${id} failed! Server says: "${responseJSON.response_message}"`)
 			return;
@@ -127,15 +189,14 @@
 		state.battleDataReady = false;
 		const response = await fetch(APIBattleURL(id));
 		const responseJSON = await response.json();
-		console.table(responseJSON)
+		//	console.table(responseJSON)
 		if(responseJSON.response_type === 'FAIL'){
 			setErrorMessage(`Fetching battle #${id} failed! Server says: "${responseJSON.response_message}"`)
 			//	TODO: clear old data if fetch fails?
 			return;
 		}
-		state.type = APIBattleTypeLabels[responseJSON.type];	//	TODO: get real values for this enum
+		state.type = Number(responseJSON.type);
 		state.formats = responseJSON.format_tokens;	//	TODO: handle multiple formats
-		state.format = responseJSON.format_tokens[0];	//	hack, for now
 		state.coverArt = responseJSON.cover_art_url;
 			//	TODO: multiple hosts? might take an API update
 		state.hostID = responseJSON.botbr_id;
@@ -143,16 +204,21 @@
 		state.start = responseJSON.start;
 		state.end = responseJSON.end;
 		
+		if(state.type === BATTLE_TYPE.XHB){
+			state.subtype = getXHBSubtypeByDate(state.start, state.end);
+		}
+		
 		await fetchUserById(responseJSON.botbr_id);	//	TODO: too much chain of async callbacks
 		
 		state.battleDataReady = true;
 	}
 	
 	const stateDefaults = {
-		//	TODO: would it be crazy to init these values from html?
+			//	feels like two-way binding between html and javascript is suspect here
 		url:undefined,
-		site:'BotB',
+		site:siteEl.querySelector('dd').textContent,
 		type:undefined,
+		subtype:undefined,
 		formats:undefined,
 		host:undefined,
 		id:undefined,
@@ -161,6 +227,9 @@
 		hostAvatar:undefined,
 		battleDataReady:undefined,
 		botbrDataReady:undefined,
+		'option-emoji':optionEmojiEl.checked,
+		'option-underscores':optionUnderscoresEl.checked,
+		'option-alphanumeric':optionAlphanumericEl.checked,
 	}
 	const state = new Proxy({
 		...stateDefaults,
@@ -169,15 +238,17 @@
 			Object.entries(stateDefaults).forEach(([key, value])=>state[key] = value);
 		},
 	},{
-		set(obj, prop, value) {
+		set(state, prop, value) {
 			//	TODO: any benefit to dedupe?
-			console.log(prop, obj[prop], '->', value);
+			console.log(prop, state[prop], '->', value);
+			
+			let andGenerateFolderName = false;
+			
 			switch(prop){
 				case 'url':
-					console.log(value);
 					if(value === ''){
 						setErrorMessage('');
-					}else if(value && obj[prop] !== value){
+					}else if(value && state[prop] !== value){
 						const battleId = (value.match(matchBattleId) ?? []).pop();
 						state.id = battleId;
 							//	TODO: handle already fetching
@@ -193,10 +264,13 @@
 					siteEl.querySelector('dd').textContent = value;
 				break;
 				case 'type':
-					typeEl.querySelector('dd').textContent = value;
+					typeEl.querySelector('dd').textContent = APIBattleTypeLabels[value];
+				break;
+				case 'subtype':
+					subtypeEl.querySelector('dd').textContent = value;
 				break;
 				case 'formats':
-					formatsEl.querySelector('dd').textContent = value;
+					formatsEl.querySelector('dd').textContent = (value ?? []).join(', ');
 				break;
 				case 'host':
 					hostEl.querySelector('dd').textContent = value;
@@ -223,24 +297,40 @@
 					hostAvatarEl.src = value ? getAvatarURL(value) : '';
 				break;
 				case 'battleDataReady':
-					if(value === true){
-						folderNameEl.value = generateFolderFromState();
-					};
+					andGenerateFolderName = true;
+				break;
+				case 'option-emoji':
+					optionEmojiEl.checked = value;
+					andGenerateFolderName = true;
+				case 'option-underscores':
+					optionUnderscoresEl.checked = value;
+					andGenerateFolderName = true;
+				case 'option-alphanumeric':
+					optionAlphanumericEl.checked = value;
+					andGenerateFolderName = true;
 				break;
 				default:
 					//	therefore not a watched prop
 					//	edit: or I spelled something wrong
 				break;
 			}
-			obj[prop] = value;
+			
+			state[prop] = value;
+			
+				//	this is feeling hacky, pre and post state mutation side effects...
+				
+			if(state.battleDataReady === true && andGenerateFolderName === true){
+				folderNameEl.value = generateFolderName(state);
+			}
+			
 			return true;
 		},
 	});
 	state.init();
 	
 	async function onChangeBattleURL(event){
-		console.log(event);
 		//	TODO: validate url here?
+		//	TODO: test to ensure that target is consistent cross browser and event type
 			state.url = event.target.value;
 	}
 	
@@ -248,4 +338,10 @@
 	urlInputEl.addEventListener('change', onChangeBattleURL);
 	urlInputEl.dispatchEvent(new CustomEvent('change'));
 	urlInputEl.addEventListener('input', debounce(onChangeBattleURL, 700));
+	
+	function onChangeOption(event){
+		state[`option-${event.target.id}`] = event.target.checked;
+	}
+	
+	[optionEmojiEl, optionUnderscoresEl, optionAlphanumericEl].forEach(element=>element.addEventListener('change', onChangeOption));
 </script>
