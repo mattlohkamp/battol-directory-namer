@@ -83,24 +83,51 @@
 	
 	const MILISECONDS_PER_DAY = HOURS_PER_DAY * MILISECONDS_PER_HOUR;
 	
-	function getXHBSubtypeByDate(start,end,useOfor1 = true) {
-			//	TODO: explain this hackery
-		const durationMs = (new Date(end) - new Date(start)) - MILISECONDS_PER_DAY;
+	const getXHBSubtypeByDateDefaultOptions = {
+		useOfor1:true,
+		currentDate: null,
+	}
+	function getXHBSubtypeByDate(start,end,options) {
+		options = {
+			...getXHBSubtypeByDateDefaultOptions,
+			...options,
+		}
+		if(options.currentDate === null){
+			options.currentDate = new Date();
+		}
+		if(end < options.currentDate){
+			return 'XHB';
+			/*
+				So - for future battles, start is a precise value, but end is an estimate - and once the battle has been completed, end is set to the precise value.
+				
+				Which means a future battle can use the formula (duration - 24 hours) to find the time for entries.
+				
+				A past battle could estimate based on closest XHB value - if the precise duration is 1 hour, 37 minutes, we can reasonably assume it was an OHB with 37 minutes to vote and complete.
+				
+				However, what if a battle has lots of entries - an OHB with a 1.5 hour voting period would be 2.5 hours long in total - which looks exactly the same as a 2HB with a 30 minute voting period. Indistinguishable.
+				
+				We could try to differenciate by considering entry count - in the example above, a battle with 15 entries is more likely to be an OHB that ran long, whereas a battle with 5 entries is more likely to be an average 2HB.
+				
+				But that's not reliable - hosts can disable late penalites, effectively increasing entry time by any arbitrary amount. Hosts can also delay closeing a battle, so even an OHB that took 15 minutes to slug, might not have been closed for another three hours afterwards - making it appear to be 4 hours and fifteen minutes, pointing to a 4HB, etc.
+				
+				So sounds like we just can't know the precise duration of past battles, for now.
+			*/
+		}
+			//	we only care about the time the battle is open to entries; by default, the battle length includes 24 hours of voting time.
+			//	so an OHB would have a duration of 25 hours: 1 hour of entries, 24 hours of voting.
+		const durationMs = (end - start) - MILISECONDS_PER_DAY;
+			
 		if(durationMs === 1 * MILISECONDS_PER_HOUR){
-			return `${useOfor1 ? 'O' : '1'}HB`;
+			return `${options.useOfor1 ? 'O' : '1'}HB`;
 		}else{
 			return `${durationMs / MILISECONDS_PER_HOUR}HB`;
 		}
 	}
 	
-		//	TODO: this fails if the trailing slash is missing, as in:
-		//	https://battleofthebits.com/arena/Battle/1
-	const matchBattleId = /Battle\/(\d+)\//;
+	const matchBattleId = /Battle\/(\d+)/;
 	function getBattleIdFromURL(url){
 		return (url.match(matchBattleId) ?? []).pop();
 	}
-	
-		//	TODO: implement folder name transformation options -
 	
 	const matchEmoji = /\p{RGI_Emoji}/gv;
 	function stripEmoji(string){
@@ -151,10 +178,14 @@
 		//	TODO: arguments to customize final folder name string
 	
 	function generateFolderName(state){
-		let folderName = `${state.site} ${state.subtype} #${state.id} ${state.title} (${state.formats.join(', ')})`;
-		if(state['option-emoji'] === false){
-			folderName = stripEmoji(folderName);
-		}
+		
+			//	title is the only field that can contain emoji,
+			//	and may include trailing space(s)
+			//	so we need to deal with it first
+		const modifiedTitle = (state['option-emoji'] ? state.title : stripEmoji(state.title)).trim()
+		
+		let folderName = `${state.site} ${state.subtype} #${state.id} ${modifiedTitle} (${state.formats.join(', ')})`;
+		
 		if(state['option-underscores'] === true){
 			folderName = replaceSpacesWithUnderscore(folderName);
 		}
@@ -196,13 +227,14 @@
 			return;
 		}
 		state.type = Number(responseJSON.type);
-		state.formats = responseJSON.format_tokens;	//	TODO: handle multiple formats
+		state.formats = responseJSON.format_tokens;
 		state.coverArt = responseJSON.cover_art_url;
 			//	TODO: multiple hosts? might take an API update
 		state.hostID = responseJSON.botbr_id;
 		state.title = responseJSON.title;
-		state.start = responseJSON.start;
-		state.end = responseJSON.end;
+			//	TODO: should we copy redux and stick to primitive types and collections?
+		state.start = new Date(responseJSON.start);
+		state.end = new Date(responseJSON.end);
 		
 		if(state.type === BATTLE_TYPE.XHB){
 			state.subtype = getXHBSubtypeByDate(state.start, state.end);
@@ -240,7 +272,7 @@
 	},{
 		set(state, prop, value) {
 			//	TODO: any benefit to dedupe?
-			console.log(prop, state[prop], '->', value);
+			//	console.log(prop, state[prop], '->', value);
 			
 			let andGenerateFolderName = false;
 			
@@ -302,9 +334,11 @@
 				case 'option-emoji':
 					optionEmojiEl.checked = value;
 					andGenerateFolderName = true;
+				break;
 				case 'option-underscores':
 					optionUnderscoresEl.checked = value;
 					andGenerateFolderName = true;
+				break;
 				case 'option-alphanumeric':
 					optionAlphanumericEl.checked = value;
 					andGenerateFolderName = true;
@@ -340,7 +374,7 @@
 	urlInputEl.addEventListener('input', debounce(onChangeBattleURL, 700));
 	
 	function onChangeOption(event){
-		state[`option-${event.target.id}`] = event.target.checked;
+		state[`${event.target.id}`] = event.target.checked;
 	}
 	
 	[optionEmojiEl, optionUnderscoresEl, optionAlphanumericEl].forEach(element=>element.addEventListener('change', onChangeOption));
