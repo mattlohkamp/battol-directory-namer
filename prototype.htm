@@ -1,4 +1,10 @@
 <style>
+	#current-battles-container {
+		visibility: visible;
+		&:has(#current-battles-list:empty) {
+			visibility: hidden;
+		}
+	}
 	dt:has(+dd:empty) {
 		opacity: .5;
 		&+dd::after {
@@ -13,9 +19,11 @@
 		}
 	}
 </style>
-<!--	TODO: populate list of current battles, periodically refresh? or notify of stale data?	-->
-<ol id="current-battles"></ol>
-<!--	TODO: allow just battle id, or name?	-->
+<!--	TODO: periodically refresh? or notify of stale data?	-->
+<div id="current-battles-container">
+	<h2>Current &amp; Upcomming Battles:</h2>
+	<ol id="current-battles-list"></ol>
+</div>
 <label><span>Posit Battol URL: </span><input type="url" id="battle-url" placeholder="https://battleofthebits.com/arena/Battle/1234/MainScreen/EXAMPLE" size="100" autofocus /></label>
 <p id="error-message"></p>
 <br />
@@ -55,6 +63,8 @@
 <script src="mini-debounce.js"></script>
 <script>
 
+	/*	CONSTANTS and init	*/
+
 		//	double-dipping these feels hacky, I miss typescript enums
 
 	const BATTLE_TYPE = {
@@ -82,6 +92,8 @@
 	const MILISECONDS_PER_HOUR = MINTUES_PER_HOUR * SECONDS_PER_MINUTE * MILISECONDS_PER_SECOND;
 	
 	const MILISECONDS_PER_DAY = HOURS_PER_DAY * MILISECONDS_PER_HOUR;
+	
+	/*	API & data */
 	
 	const getXHBSubtypeByDateDefaultOptions = {
 		useOfor1:true,
@@ -146,13 +158,24 @@
 	const APIDomain = 'https://battleofthebits.com/'
 	const APIBase = `${APIDomain}api/v1/`;
 	const APIBattleURL = (id)=>`${APIBase}battle/load/${id}`;
+	const APICurrentBattlesURL = ()=>`${APIBase}battle/current`;
 	const APIUserURL = (id)=>`${APIBase}botbr/load/${id}`;
 	const getAvatarURL = (avatarURL)=>`${APIDomain}${avatarURL}`;
+	
+	function onClickBattle(event){
+		urlInputEl.value = event.target.value;
+		urlInputEl.dispatchEvent(new CustomEvent('change'));
+	}
+	
+	/*	VIEW REFS*/
 	
 	//	TODO: it'd be nice if there was a way to get these refs automagically
 	
 	const urlInputEl = document.querySelector('#battle-url');
 	const errorMessageEl = document.querySelector('#error-message');
+	
+	const currentBattlesContainerEl = document.querySelector('#current-battles-container');
+	const currentBattlesListEl = document.querySelector('#current-battles-list');
 	
 	const siteEl = document.querySelector('#battle-site');
 	const typeEl = document.querySelector('#battle-type');
@@ -184,7 +207,7 @@
 			//	so we need to deal with it first
 		const modifiedTitle = (state['option-emoji'] ? state.title : stripEmoji(state.title)).trim()
 		
-		let folderName = `${state.site} ${state.subtype} #${state.id} ${modifiedTitle} (${state.formats.join(', ')})`;
+		let folderName = `${state.site}#${state.id}${state.subtype ? ` ${state.subtype}` : ''} ${modifiedTitle} (${state.formats.join(', ')})`;
 		
 		if(state['option-underscores'] === true){
 			folderName = replaceSpacesWithUnderscore(folderName);
@@ -201,11 +224,26 @@
 	
 		//	TODO: DRY these API request methods out
 	
+	async function fetchCurrentBattles() {
+		state.battlesDataReady = false;
+		const response = await fetch(APICurrentBattlesURL());
+		const responseJSON = await response.json();
+		//	console.table(responseJSON);
+		if(responseJSON.response_type === 'FAIL'){
+			setErrorMessage(`Fetching current battles failed! Server says: "${responseJSON.response_message}"`)
+			return;
+		}
+		state.currentBattleOptions = responseJSON.map((battle)=>({
+			value: battle.profile_url,
+			label: `${APIBattleTypeLabels[battle.type === BATTLE_TYPE.XHB ? getXHBSubtypeByDate(battle.start, battle.end) : battle.type]} #${battle.id} ${battle.title}`,
+		}));
+		state.battlesDataReady = true;
+	}
+	
 	async function fetchUserById(id) {
 		state.userDataReady = false;
 		const response = await fetch(APIUserURL(id));
 		const responseJSON = await response.json();
-		//	console.table(responseJSON)
 		if(responseJSON.response_type === 'FAIL'){
 			setErrorMessage(`Fetching user #${id} failed! Server says: "${responseJSON.response_message}"`)
 			return;
@@ -220,12 +258,15 @@
 		state.battleDataReady = false;
 		const response = await fetch(APIBattleURL(id));
 		const responseJSON = await response.json();
-		//	console.table(responseJSON)
 		if(responseJSON.response_type === 'FAIL'){
 			setErrorMessage(`Fetching battle #${id} failed! Server says: "${responseJSON.response_message}"`)
 			//	TODO: clear old data if fetch fails?
 			return;
 		}
+		
+		//	TODO: generalized function to convert API response to local object
+		//	const battleObject = ServerBattleToLocal(responseJSON);
+		
 		state.type = Number(responseJSON.type);
 		state.formats = responseJSON.format_tokens;
 		state.coverArt = responseJSON.cover_art_url;
@@ -259,6 +300,8 @@
 		hostAvatar:undefined,
 		battleDataReady:undefined,
 		botbrDataReady:undefined,
+		currentBattleOptions: undefined,
+		battlesDataReady: undefined,
 		'option-emoji':optionEmojiEl.checked,
 		'option-underscores':optionUnderscoresEl.checked,
 		'option-alphanumeric':optionAlphanumericEl.checked,
@@ -277,6 +320,19 @@
 			let andGenerateFolderName = false;
 			
 			switch(prop){
+				case 'currentBattleOptions':
+					currentBattlesListEl.innerHTML = '';
+					if(value){
+						value.forEach((battleOption)=>{
+							const button = document.createElement('button');
+							button.type = 'button';
+							button.value = battleOption.value;
+							button.textContent = battleOption.label;
+							button.addEventListener('click', onClickBattle);
+							currentBattlesListEl.appendChild(document.createElement('li')).appendChild(button);
+						});
+					}
+				break;
 				case 'url':
 					if(value === ''){
 						setErrorMessage('');
@@ -362,6 +418,8 @@
 	});
 	state.init();
 	
+	fetchCurrentBattles();
+	
 	async function onChangeBattleURL(event){
 		//	TODO: validate url here?
 		//	TODO: test to ensure that target is consistent cross browser and event type
@@ -370,7 +428,7 @@
 	
 	//	urlInputEl.pattern = matchBattleId;	//	TODO: test html input pattern stuff more?
 	urlInputEl.addEventListener('change', onChangeBattleURL);
-	urlInputEl.dispatchEvent(new CustomEvent('change'));
+	urlInputEl.dispatchEvent(new CustomEvent('change'));	//	if there's an existing value on refresh
 	urlInputEl.addEventListener('input', debounce(onChangeBattleURL, 700));
 	
 	function onChangeOption(event){
