@@ -48,6 +48,7 @@
 	<!--	TODO: datestamp formatting options	-->
 </ul>
 <!--	TODO: customize folder name generation scheme	-->
+<!--	https://jqueryui.com/sortable/#default ?	-->
 <select id="folder-name-tokens" multiple>
     <option>Site</option>
     <option>Type</option>
@@ -94,6 +95,8 @@
 	const MILISECONDS_PER_DAY = HOURS_PER_DAY * MILISECONDS_PER_HOUR;
 	
 	/*	API & data */
+	
+	//	TODO:	guess at major type by time period - distinguish monthlies from quarterlies, and possibly other special cases like advent calendar, halloween, etc
 	
 	const getXHBSubtypeByDateDefaultOptions = {
 		useOfor1:true,
@@ -233,6 +236,10 @@
 			setErrorMessage(`Fetching current battles failed! Server says: "${responseJSON.response_message}"`)
 			return;
 		}
+			//	TODO: redueCurrentBattleResponseToOptions()
+			//	same functionality as the map function below,
+			//	but with a filter step to exclude `period: 'vote'`
+			//	also TODO:	enum to keep track of possible values of period
 		state.currentBattleOptions = responseJSON.map((battle)=>({
 			value: battle.profile_url,
 			label: `${APIBattleTypeLabels[battle.type === BATTLE_TYPE.XHB ? getXHBSubtypeByDate(battle.start, battle.end) : battle.type]} #${battle.id} ${battle.title}`,
