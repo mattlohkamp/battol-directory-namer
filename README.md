@@ -1,2 +1,5 @@
-# battol-directory-namer
-a quick util for generating consistent naming schemes for botb battle folders
+# Batol Directory Namer
+
+https://botb.nfshost.com/batol-directory-namer
+
+Customizeable filesystem-friendly directory name generator for BotB battles

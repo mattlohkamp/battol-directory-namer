@@ -1,12 +1,23 @@
 {
-  "name": "battol-directory-namer",
-  "version": "1.0.0",
-  "description": "a quick util for generating consistent naming schemes for botb battle folders",
-  "main": "mini-debounce.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
-  "keywords": [],
-  "author": "",
-  "license": "ISC"
+	"name": "battol-directory-namer",
+	"version": "1.0.0",
+	"description": "a quick util for generating consistent naming schemes for botb battle folders",
+	"type": "module",
+	"main": "",
+	"scripts": {
+		"dev": "vite",
+		"build": "vite build"
+	},
+	"keywords": [
+		"battleofthebits, botb, utility, directory, folder, naming"
+	],
+	"author": "Matt Lohkamp",
+	"license": "TBD",
+	"dependencies": {
+		"@vitejs/plugin-react": "^4.3.4",
+		"vite": "^6.0.3"
+	},
+	"devDependencies": {
+		"vite-plugin-html": "^3.2.2"
+	}
 }
