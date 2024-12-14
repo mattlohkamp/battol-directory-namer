@@ -1,0 +1,12 @@
+{
+  "name": "battol-directory-namer",
+  "version": "1.0.0",
+  "description": "a quick util for generating consistent naming schemes for botb battle folders",
+  "main": "mini-debounce.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC"
+}
