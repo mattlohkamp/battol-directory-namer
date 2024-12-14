@@ -9,7 +9,6 @@ export default defineConfig({
 		createHtmlPlugin({
 			inject: {
 				data: {
-					test: "test",
 					...siteStrings,
 				},
 			},

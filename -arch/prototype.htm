@@ -5,17 +5,17 @@
 			visibility: hidden;
 		}
 	}
-	dt:has(+dd:empty) {
-		opacity: .5;
-		&+dd::after {
-			opacity: .5;
-			content:'n/a';
+	dt:has(+ dd:empty) {
+		opacity: 0.5;
+		& + dd::after {
+			opacity: 0.5;
+			content: "n/a";
 		}
 	}
 	#error-message {
 		color: red;
 		&:empty {
-			display:none;
+			display: none;
 		}
 	}
 </style>
@@ -24,94 +24,155 @@
 	<h2>Current &amp; Upcomming Battles:</h2>
 	<ol id="current-battles-list"></ol>
 </div>
-<label><span>Posit Battol URL: </span><input type="url" id="battle-url" placeholder="https://battleofthebits.com/arena/Battle/1234/MainScreen/EXAMPLE" size="100" autofocus /></label>
+<label
+	><span>Posit Battol URL: </span
+	><input
+		type="url"
+		id="battle-url"
+		placeholder="https://battleofthebits.com/arena/Battle/1234/MainScreen/EXAMPLE"
+		size="100"
+		autofocus
+/></label>
 <p id="error-message"></p>
 <br />
 <img id="host-avatar" width="150" />
-<img id="battle-cover-art"  width="150" />
+<img id="battle-cover-art" width="150" />
 <dl>
-	<div id="battle-site"><dt>Site</dt><dd>BotB</dd></div>
-	<div id="battle-type"><dt>Type</dt><dd></dd></div>
-	<div id="battle-subtype"><dt>Subtype</dt><dd></dd></div>
-	<div id="battle-id"><dt>ID</dt><dd></dd></div>
-	<div id="battle-host"><dt>Host</dt><dd></dd></div>
-	<div id="battle-title"><dt>Title</dt><dd></dd></div>
-	<div id="battle-formats"><dt>Format(s)</dt><dd></dd></div>	
+	<div id="battle-site">
+		<dt>Site</dt>
+		<dd>BotB</dd>
+	</div>
+	<div id="battle-type">
+		<dt>Type</dt>
+		<dd></dd>
+	</div>
+	<div id="battle-subtype">
+		<dt>Subtype</dt>
+		<dd></dd>
+	</div>
+	<div id="battle-id">
+		<dt>ID</dt>
+		<dd></dd>
+	</div>
+	<div id="battle-host">
+		<dt>Host</dt>
+		<dd></dd>
+	</div>
+	<div id="battle-title">
+		<dt>Title</dt>
+		<dd></dd>
+	</div>
+	<div id="battle-formats">
+		<dt>Format(s)</dt>
+		<dd></dd>
+	</div>
 	<!--	TODO: break out start / end elements into more granular segments	-->
-	<div id="battle-start"><dt>Start</dt><dd></dd></div>
-	<div id="battle-end"><dt>End</dt><dd></dd></div>
+	<div id="battle-start">
+		<dt>Start</dt>
+		<dd></dd>
+	</div>
+	<div id="battle-end">
+		<dt>End</dt>
+		<dd></dd>
+	</div>
 </dl>
 <ul id="options">
-	<li><label><input type="checkbox" id="option-emoji" checked /><span> allow emoji 💯</span></label></li>
-	<li><label><input type="checkbox" id="option-underscores" /><span> convert spaces to underscores</span></label></li>
-	<li><label><input type="checkbox" id="option-alphanumeric" /><span> strip non alpha numerics (except underscores)</span></label></li>
+	<li>
+		<label
+			><input type="checkbox" id="option-emoji" checked /><span>
+				allow emoji 💯</span
+			></label
+		>
+	</li>
+	<li>
+		<label
+			><input type="checkbox" id="option-underscores" /><span>
+				convert spaces to underscores</span
+			></label
+		>
+	</li>
+	<li>
+		<label
+			><input type="checkbox" id="option-alphanumeric" /><span>
+				strip non alpha numerics (except underscores)</span
+			></label
+		>
+	</li>
 	<!--	TODO: datestamp formatting options	-->
 </ul>
 <!--	TODO: customize folder name generation scheme	-->
 <!--	https://jqueryui.com/sortable/#default ?	-->
 <select id="folder-name-tokens" multiple>
-    <option>Site</option>
-    <option>Type</option>
+	<option>Site</option>
+	<option>Type</option>
 	<option>Subtype</option>
-    <option>ID</option>
+	<option>ID</option>
 	<option>Host</option>
 	<option>Title</option>
 	<option>Format(s)</option>
 	<option>Start</option>
 	<option>End</option>
 </select>
-<label><span>Folder Name: </span><input type="text" id="folder-name" readonly size="50" placeholder="no battle data loaded..." /></label>
+<label
+	><span>Folder Name: </span
+	><input
+		type="text"
+		id="folder-name"
+		readonly
+		size="50"
+		placeholder="no battle data loaded..."
+/></label>
 <script src="mini-debounce.js"></script>
 <script>
-
 	/*	CONSTANTS and init	*/
 
-		//	double-dipping these feels hacky, I miss typescript enums
+	//	double-dipping these feels hacky, I miss typescript enums
 
 	const BATTLE_TYPE = {
-		MAJOR:0,
-		CAMPAIGN:1,
-		UNKNOWN_2:2,
-		XHB:3,
-		UNKNOWN_4:4,
-	}
+		MAJOR: 0,
+		CAMPAIGN: 1,
+		UNKNOWN_2: 2,
+		XHB: 3,
+		UNKNOWN_4: 4,
+	};
 
 	const APIBattleTypeLabels = [
 		//	TODO: test + verify values
-		'MAJOR',
-		'CAMPAIGN',
-		'UNKNOWN_2',
-		'XHB',
-		'UNKNOWN_4',
-	]
-	
+		"MAJOR",
+		"CAMPAIGN",
+		"UNKNOWN_2",
+		"XHB",
+		"UNKNOWN_4",
+	];
+
 	const MILISECONDS_PER_SECOND = 1000;
 	const SECONDS_PER_MINUTE = 60;
 	const MINTUES_PER_HOUR = 60;
 	const HOURS_PER_DAY = 24;
-	
-	const MILISECONDS_PER_HOUR = MINTUES_PER_HOUR * SECONDS_PER_MINUTE * MILISECONDS_PER_SECOND;
-	
+
+	const MILISECONDS_PER_HOUR =
+		MINTUES_PER_HOUR * SECONDS_PER_MINUTE * MILISECONDS_PER_SECOND;
+
 	const MILISECONDS_PER_DAY = HOURS_PER_DAY * MILISECONDS_PER_HOUR;
-	
+
 	/*	API & data */
-	
+
 	//	TODO:	guess at major type by time period - distinguish monthlies from quarterlies, and possibly other special cases like advent calendar, halloween, etc
-	
+
 	const getXHBSubtypeByDateDefaultOptions = {
-		useOfor1:true,
+		useOfor1: true,
 		currentDate: null,
-	}
-	function getXHBSubtypeByDate(start,end,options) {
+	};
+	function getXHBSubtypeByDate(start, end, options) {
 		options = {
 			...getXHBSubtypeByDateDefaultOptions,
 			...options,
-		}
-		if(options.currentDate === null){
+		};
+		if (options.currentDate === null) {
 			options.currentDate = new Date();
 		}
-		if(end < options.currentDate){
-			return 'XHB';
+		if (end < options.currentDate) {
+			return "XHB";
 			/*
 				So - for future battles, start is a precise value, but end is an estimate - and once the battle has been completed, end is set to the precise value.
 				
@@ -128,131 +189,146 @@
 				So sounds like we just can't know the precise duration of past battles, for now.
 			*/
 		}
-			//	we only care about the time the battle is open to entries; by default, the battle length includes 24 hours of voting time.
-			//	so an OHB would have a duration of 25 hours: 1 hour of entries, 24 hours of voting.
-		const durationMs = (end - start) - MILISECONDS_PER_DAY;
-			
-		if(durationMs === 1 * MILISECONDS_PER_HOUR){
-			return `${options.useOfor1 ? 'O' : '1'}HB`;
-		}else{
+		//	we only care about the time the battle is open to entries; by default, the battle length includes 24 hours of voting time.
+		//	so an OHB would have a duration of 25 hours: 1 hour of entries, 24 hours of voting.
+		const durationMs = end - start - MILISECONDS_PER_DAY;
+
+		if (durationMs === 1 * MILISECONDS_PER_HOUR) {
+			return `${options.useOfor1 ? "O" : "1"}HB`;
+		} else {
 			return `${durationMs / MILISECONDS_PER_HOUR}HB`;
 		}
 	}
-	
+
 	const matchBattleId = /Battle\/(\d+)/;
-	function getBattleIdFromURL(url){
+	function getBattleIdFromURL(url) {
 		return (url.match(matchBattleId) ?? []).pop();
 	}
-	
+
 	const matchEmoji = /\p{RGI_Emoji}/gv;
-	function stripEmoji(string){
-		return string.replaceAll(matchEmoji,'');
+	function stripEmoji(string) {
+		return string.replaceAll(matchEmoji, "");
 	}
-	
-	function replaceSpacesWithUnderscore(string){
-		return string.replaceAll(' ','_');
+
+	function replaceSpacesWithUnderscore(string) {
+		return string.replaceAll(" ", "_");
 	}
-	
+
 	const matchNonAlphaNumerics = /[^0-9a-zA-Z_]/g;
-	function stripNonAlphaNumerics(string){
-		return string.replaceAll(matchNonAlphaNumerics,'');
+	function stripNonAlphaNumerics(string) {
+		return string.replaceAll(matchNonAlphaNumerics, "");
 	}
-	
-	const APIDomain = 'https://battleofthebits.com/'
+
+	const APIDomain = "https://battleofthebits.com/";
 	const APIBase = `${APIDomain}api/v1/`;
-	const APIBattleURL = (id)=>`${APIBase}battle/load/${id}`;
-	const APICurrentBattlesURL = ()=>`${APIBase}battle/current`;
-	const APIUserURL = (id)=>`${APIBase}botbr/load/${id}`;
-	const getAvatarURL = (avatarURL)=>`${APIDomain}${avatarURL}`;
-	
-	function onClickBattle(event){
+	const APIBattleURL = (id) => `${APIBase}battle/load/${id}`;
+	const APICurrentBattlesURL = () => `${APIBase}battle/current`;
+	const APIUserURL = (id) => `${APIBase}botbr/load/${id}`;
+	const getAvatarURL = (avatarURL) => `${APIDomain}${avatarURL}`;
+
+	function onClickBattle(event) {
 		urlInputEl.value = event.target.value;
-		urlInputEl.dispatchEvent(new CustomEvent('change'));
+		urlInputEl.dispatchEvent(new CustomEvent("change"));
 	}
-	
+
 	/*	VIEW REFS*/
-	
+
 	//	TODO: it'd be nice if there was a way to get these refs automagically
-	
-	const urlInputEl = document.querySelector('#battle-url');
-	const errorMessageEl = document.querySelector('#error-message');
-	
-	const currentBattlesContainerEl = document.querySelector('#current-battles-container');
-	const currentBattlesListEl = document.querySelector('#current-battles-list');
-	
-	const siteEl = document.querySelector('#battle-site');
-	const typeEl = document.querySelector('#battle-type');
-	const subtypeEl = document.querySelector('#battle-subtype');
-	const formatsEl = document.querySelector('#battle-formats');
-	const hostEl = document.querySelector('#battle-host');
-	const botbIdEl = document.querySelector('#battle-botb-id');
-	const idEl = document.querySelector('#battle-id');
-	const titleEl = document.querySelector('#battle-title');
-	const startEl = document.querySelector('#battle-start');
-	const endEl = document.querySelector('#battle-end');
-	
-	const folderNameEl = document.querySelector('#folder-name');
-	
-	const hostAvatarEl = document.querySelector('#host-avatar');
-	const coverArtEl = document.querySelector('#battle-cover-art');
-	
+
+	const urlInputEl = document.querySelector("#battle-url");
+	const errorMessageEl = document.querySelector("#error-message");
+
+	const currentBattlesContainerEl = document.querySelector(
+		"#current-battles-container"
+	);
+	const currentBattlesListEl = document.querySelector("#current-battles-list");
+
+	const siteEl = document.querySelector("#battle-site");
+	const typeEl = document.querySelector("#battle-type");
+	const subtypeEl = document.querySelector("#battle-subtype");
+	const formatsEl = document.querySelector("#battle-formats");
+	const hostEl = document.querySelector("#battle-host");
+	const botbIdEl = document.querySelector("#battle-botb-id");
+	const idEl = document.querySelector("#battle-id");
+	const titleEl = document.querySelector("#battle-title");
+	const startEl = document.querySelector("#battle-start");
+	const endEl = document.querySelector("#battle-end");
+
+	const folderNameEl = document.querySelector("#folder-name");
+
+	const hostAvatarEl = document.querySelector("#host-avatar");
+	const coverArtEl = document.querySelector("#battle-cover-art");
+
 	//	const optionsEl = document.querySelector('#options');
-	const optionEmojiEl = document.querySelector('#option-emoji');
-	const optionUnderscoresEl = document.querySelector('#option-underscores');
-	const optionAlphanumericEl = document.querySelector('#option-alphanumeric');
-	
-		//	TODO: arguments to customize final folder name string
-	
-	function generateFolderName(state){
-		
-			//	title is the only field that can contain emoji,
-			//	and may include trailing space(s)
-			//	so we need to deal with it first
-		const modifiedTitle = (state['option-emoji'] ? state.title : stripEmoji(state.title)).trim()
-		
-		let folderName = `${state.site}#${state.id}${state.subtype ? ` ${state.subtype}` : ''} ${modifiedTitle} (${state.formats.join(', ')})`;
-		
-		if(state['option-underscores'] === true){
+	const optionEmojiEl = document.querySelector("#option-emoji");
+	const optionUnderscoresEl = document.querySelector("#option-underscores");
+	const optionAlphanumericEl = document.querySelector("#option-alphanumeric");
+
+	//	TODO: arguments to customize final folder name string
+
+	function generateFolderName(state) {
+		//	title is the only field that can contain emoji,
+		//	and may include trailing space(s)
+		//	so we need to deal with it first
+		const modifiedTitle = (
+			state["option-emoji"] ? state.title : stripEmoji(state.title)
+		).trim();
+
+		let folderName = `${state.site}#${state.id}${
+			state.subtype ? ` ${state.subtype}` : ""
+		} ${modifiedTitle} (${state.formats.join(", ")})`;
+
+		if (state["option-underscores"] === true) {
 			folderName = replaceSpacesWithUnderscore(folderName);
 		}
-		if(state['option-alphanumeric'] === true){
+		if (state["option-alphanumeric"] === true) {
 			folderName = stripNonAlphaNumerics(folderName);
 		}
 		return folderName;
 	}
-	
-	function setErrorMessage(message){
+
+	function setErrorMessage(message) {
 		errorMessageEl.textContent = message;
 	}
-	
-		//	TODO: DRY these API request methods out
-	
+
+	//	TODO: DRY these API request methods out
+
 	async function fetchCurrentBattles() {
 		state.battlesDataReady = false;
 		const response = await fetch(APICurrentBattlesURL());
 		const responseJSON = await response.json();
 		//	console.table(responseJSON);
-		if(responseJSON.response_type === 'FAIL'){
-			setErrorMessage(`Fetching current battles failed! Server says: "${responseJSON.response_message}"`)
+		if (responseJSON.response_type === "FAIL") {
+			setErrorMessage(
+				`Fetching current battles failed! Server says: "${responseJSON.response_message}"`
+			);
 			return;
 		}
-			//	TODO: redueCurrentBattleResponseToOptions()
-			//	same functionality as the map function below,
-			//	but with a filter step to exclude `period: 'vote'`
-			//	also TODO:	enum to keep track of possible values of period
-		state.currentBattleOptions = responseJSON.map((battle)=>({
+		//	TODO: redueCurrentBattleResponseToOptions()
+		//	same functionality as the map function below,
+		//	but with a filter step to exclude `period: 'vote'`
+		//	also TODO:	enum to keep track of possible values of period
+		state.currentBattleOptions = responseJSON.map((battle) => ({
 			value: battle.profile_url,
-			label: `${APIBattleTypeLabels[battle.type === BATTLE_TYPE.XHB ? getXHBSubtypeByDate(battle.start, battle.end) : battle.type]} #${battle.id} ${battle.title}`,
+			label: `${
+				APIBattleTypeLabels[
+					battle.type === BATTLE_TYPE.XHB
+						? getXHBSubtypeByDate(battle.start, battle.end)
+						: battle.type
+				]
+			} #${battle.id} ${battle.title}`,
 		}));
 		state.battlesDataReady = true;
 	}
-	
+
 	async function fetchUserById(id) {
 		state.userDataReady = false;
 		const response = await fetch(APIUserURL(id));
 		const responseJSON = await response.json();
-		if(responseJSON.response_type === 'FAIL'){
-			setErrorMessage(`Fetching user #${id} failed! Server says: "${responseJSON.response_message}"`)
+		if (responseJSON.response_type === "FAIL") {
+			setErrorMessage(
+				`Fetching user #${id} failed! Server says: "${responseJSON.response_message}"`
+			);
 			return;
 		}
 		state.host = responseJSON.name;
@@ -260,187 +336,200 @@
 		state.hostURL = responseJSON.profile_url;
 		state.userDataReady = true;
 	}
-	
-	async function fetchBattleById(id){
+
+	async function fetchBattleById(id) {
 		state.battleDataReady = false;
 		const response = await fetch(APIBattleURL(id));
 		const responseJSON = await response.json();
-		if(responseJSON.response_type === 'FAIL'){
-			setErrorMessage(`Fetching battle #${id} failed! Server says: "${responseJSON.response_message}"`)
+		if (responseJSON.response_type === "FAIL") {
+			setErrorMessage(
+				`Fetching battle #${id} failed! Server says: "${responseJSON.response_message}"`
+			);
 			//	TODO: clear old data if fetch fails?
 			return;
 		}
-		
+
 		//	TODO: generalized function to convert API response to local object
 		//	const battleObject = ServerBattleToLocal(responseJSON);
-		
+
 		state.type = Number(responseJSON.type);
 		state.formats = responseJSON.format_tokens;
 		state.coverArt = responseJSON.cover_art_url;
-			//	TODO: multiple hosts? might take an API update
+		//	TODO: multiple hosts? might take an API update
 		state.hostID = responseJSON.botbr_id;
 		state.title = responseJSON.title;
-			//	TODO: should we copy redux and stick to primitive types and collections?
+		//	TODO: should we copy redux and stick to primitive types and collections?
 		state.start = new Date(responseJSON.start);
 		state.end = new Date(responseJSON.end);
-		
-		if(state.type === BATTLE_TYPE.XHB){
+
+		if (state.type === BATTLE_TYPE.XHB) {
 			state.subtype = getXHBSubtypeByDate(state.start, state.end);
 		}
-		
-		await fetchUserById(responseJSON.botbr_id);	//	TODO: too much chain of async callbacks
-		
+
+		await fetchUserById(responseJSON.botbr_id); //	TODO: too much chain of async callbacks
+
 		state.battleDataReady = true;
 	}
-	
+
 	const stateDefaults = {
-			//	feels like two-way binding between html and javascript is suspect here
-		url:undefined,
-		site:siteEl.querySelector('dd').textContent,
-		type:undefined,
-		subtype:undefined,
-		formats:undefined,
-		host:undefined,
-		id:undefined,
-		title:undefined,
-		coverArt:undefined,
-		hostAvatar:undefined,
-		battleDataReady:undefined,
-		botbrDataReady:undefined,
+		//	feels like two-way binding between html and javascript is suspect here
+		url: undefined,
+		site: siteEl.querySelector("dd").textContent,
+		type: undefined,
+		subtype: undefined,
+		formats: undefined,
+		host: undefined,
+		id: undefined,
+		title: undefined,
+		coverArt: undefined,
+		hostAvatar: undefined,
+		battleDataReady: undefined,
+		botbrDataReady: undefined,
 		currentBattleOptions: undefined,
 		battlesDataReady: undefined,
-		'option-emoji':optionEmojiEl.checked,
-		'option-underscores':optionUnderscoresEl.checked,
-		'option-alphanumeric':optionAlphanumericEl.checked,
-	}
-	const state = new Proxy({
-		...stateDefaults,
-		init() {
-			//	hack? to trigger setter hooks on default values
-			Object.entries(stateDefaults).forEach(([key, value])=>state[key] = value);
+		"option-emoji": optionEmojiEl.checked,
+		"option-underscores": optionUnderscoresEl.checked,
+		"option-alphanumeric": optionAlphanumericEl.checked,
+	};
+	const state = new Proxy(
+		{
+			...stateDefaults,
+			init() {
+				//	hack? to trigger setter hooks on default values
+				Object.entries(stateDefaults).forEach(
+					([key, value]) => (state[key] = value)
+				);
+			},
 		},
-	},{
-		set(state, prop, value) {
-			//	TODO: any benefit to dedupe?
-			//	console.log(prop, state[prop], '->', value);
-			
-			let andGenerateFolderName = false;
-			
-			switch(prop){
-				case 'currentBattleOptions':
-					currentBattlesListEl.innerHTML = '';
-					if(value){
-						value.forEach((battleOption)=>{
-							const button = document.createElement('button');
-							button.type = 'button';
-							button.value = battleOption.value;
-							button.textContent = battleOption.label;
-							button.addEventListener('click', onClickBattle);
-							currentBattlesListEl.appendChild(document.createElement('li')).appendChild(button);
-						});
-					}
-				break;
-				case 'url':
-					if(value === ''){
-						setErrorMessage('');
-					}else if(value && state[prop] !== value){
-						const battleId = (value.match(matchBattleId) ?? []).pop();
-						state.id = battleId;
-							//	TODO: handle already fetching
-						if(battleId){
-							setErrorMessage();
-							fetchBattleById(battleId);
-						}else{
-							setErrorMessage('Invalid battle URL');
+		{
+			set(state, prop, value) {
+				//	TODO: any benefit to dedupe?
+				//	console.log(prop, state[prop], '->', value);
+
+				let andGenerateFolderName = false;
+
+				switch (prop) {
+					case "currentBattleOptions":
+						currentBattlesListEl.innerHTML = "";
+						if (value) {
+							value.forEach((battleOption) => {
+								const button = document.createElement("button");
+								button.type = "button";
+								button.value = battleOption.value;
+								button.textContent = battleOption.label;
+								button.addEventListener("click", onClickBattle);
+								currentBattlesListEl
+									.appendChild(document.createElement("li"))
+									.appendChild(button);
+							});
 						}
-					}
-				break;
-				case 'site':
-					siteEl.querySelector('dd').textContent = value;
-				break;
-				case 'type':
-					typeEl.querySelector('dd').textContent = APIBattleTypeLabels[value];
-				break;
-				case 'subtype':
-					subtypeEl.querySelector('dd').textContent = value;
-				break;
-				case 'formats':
-					formatsEl.querySelector('dd').textContent = (value ?? []).join(', ');
-				break;
-				case 'host':
-					hostEl.querySelector('dd').textContent = value;
-				break;
-				case 'id':
-					idEl.querySelector('dd').textContent = value;
-				break;
-				case 'botb-id':
-					botbIdEl.querySelector('dd').textContent = value;
-				break;
-				case 'title':
-					titleEl.querySelector('dd').textContent = value;
-				break;
-				case 'start':
-					startEl.querySelector('dd').textContent = value;
-				break;
-				case 'end':
-					endEl.querySelector('dd').textContent = value;
-				break;
-				case 'coverArt':
-					coverArtEl.src = value ?? '';
-				break;
-				case 'hostAvatar':
-					hostAvatarEl.src = value ? getAvatarURL(value) : '';
-				break;
-				case 'battleDataReady':
-					andGenerateFolderName = true;
-				break;
-				case 'option-emoji':
-					optionEmojiEl.checked = value;
-					andGenerateFolderName = true;
-				break;
-				case 'option-underscores':
-					optionUnderscoresEl.checked = value;
-					andGenerateFolderName = true;
-				break;
-				case 'option-alphanumeric':
-					optionAlphanumericEl.checked = value;
-					andGenerateFolderName = true;
-				break;
-				default:
-					//	therefore not a watched prop
-					//	edit: or I spelled something wrong
-				break;
-			}
-			
-			state[prop] = value;
-			
+						break;
+					case "url":
+						if (value === "") {
+							setErrorMessage("");
+						} else if (value && state[prop] !== value) {
+							const battleId = (value.match(matchBattleId) ?? []).pop();
+							state.id = battleId;
+							//	TODO: handle already fetching
+							if (battleId) {
+								setErrorMessage();
+								fetchBattleById(battleId);
+							} else {
+								setErrorMessage("Invalid battle URL");
+							}
+						}
+						break;
+					case "site":
+						siteEl.querySelector("dd").textContent = value;
+						break;
+					case "type":
+						typeEl.querySelector("dd").textContent = APIBattleTypeLabels[value];
+						break;
+					case "subtype":
+						subtypeEl.querySelector("dd").textContent = value;
+						break;
+					case "formats":
+						formatsEl.querySelector("dd").textContent = (value ?? []).join(
+							", "
+						);
+						break;
+					case "host":
+						hostEl.querySelector("dd").textContent = value;
+						break;
+					case "id":
+						idEl.querySelector("dd").textContent = value;
+						break;
+					case "botb-id":
+						botbIdEl.querySelector("dd").textContent = value;
+						break;
+					case "title":
+						titleEl.querySelector("dd").textContent = value;
+						break;
+					case "start":
+						startEl.querySelector("dd").textContent = value;
+						break;
+					case "end":
+						endEl.querySelector("dd").textContent = value;
+						break;
+					case "coverArt":
+						coverArtEl.src = value ?? "";
+						break;
+					case "hostAvatar":
+						hostAvatarEl.src = value ? getAvatarURL(value) : "";
+						break;
+					case "battleDataReady":
+						andGenerateFolderName = true;
+						break;
+					case "option-emoji":
+						optionEmojiEl.checked = value;
+						andGenerateFolderName = true;
+						break;
+					case "option-underscores":
+						optionUnderscoresEl.checked = value;
+						andGenerateFolderName = true;
+						break;
+					case "option-alphanumeric":
+						optionAlphanumericEl.checked = value;
+						andGenerateFolderName = true;
+						break;
+					default:
+						//	therefore not a watched prop
+						//	edit: or I spelled something wrong
+						break;
+				}
+
+				state[prop] = value;
+
 				//	this is feeling hacky, pre and post state mutation side effects...
-				
-			if(state.battleDataReady === true && andGenerateFolderName === true){
-				folderNameEl.value = generateFolderName(state);
-			}
-			
-			return true;
-		},
-	});
+
+				if (state.battleDataReady === true && andGenerateFolderName === true) {
+					folderNameEl.value = generateFolderName(state);
+				}
+
+				return true;
+			},
+		}
+	);
 	state.init();
-	
+
 	fetchCurrentBattles();
-	
-	async function onChangeBattleURL(event){
+
+	async function onChangeBattleURL(event) {
 		//	TODO: validate url here?
 		//	TODO: test to ensure that target is consistent cross browser and event type
-			state.url = event.target.value;
+		state.url = event.target.value;
 	}
-	
+
 	//	urlInputEl.pattern = matchBattleId;	//	TODO: test html input pattern stuff more?
-	urlInputEl.addEventListener('change', onChangeBattleURL);
-	urlInputEl.dispatchEvent(new CustomEvent('change'));	//	if there's an existing value on refresh
-	urlInputEl.addEventListener('input', debounce(onChangeBattleURL, 700));
-	
-	function onChangeOption(event){
+	urlInputEl.addEventListener("change", onChangeBattleURL);
+	urlInputEl.dispatchEvent(new CustomEvent("change")); //	if there's an existing value on refresh
+	urlInputEl.addEventListener("input", debounce(onChangeBattleURL, 700));
+
+	function onChangeOption(event) {
 		state[`${event.target.id}`] = event.target.checked;
 	}
-	
-	[optionEmojiEl, optionUnderscoresEl, optionAlphanumericEl].forEach(element=>element.addEventListener('change', onChangeOption));
+
+	[optionEmojiEl, optionUnderscoresEl, optionAlphanumericEl].forEach(
+		(element) => element.addEventListener("change", onChangeOption)
+	);
 </script>

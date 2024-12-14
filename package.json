@@ -1,9 +1,8 @@
 {
 	"name": "battol-directory-namer",
-	"version": "1.0.0",
+	"version": ".9",
 	"description": "a quick util for generating consistent naming schemes for botb battle folders",
 	"type": "module",
-	"main": "",
 	"scripts": {
 		"dev": "vite",
 		"build": "vite build"
@@ -15,6 +14,8 @@
 	"license": "TBD",
 	"dependencies": {
 		"@vitejs/plugin-react": "^4.3.4",
+		"react": "^19.0.0",
+		"react-dom": "^19.0.0",
 		"vite": "^6.0.3"
 	},
 	"devDependencies": {
