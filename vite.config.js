@@ -3,8 +3,6 @@ import react from "@vitejs/plugin-react";
 import { createHtmlPlugin } from "vite-plugin-html";
 import siteStrings from "./src/site.json";
 
-console.log(siteStrings);
-
 export default defineConfig({
 	plugins: [
 		react(),
