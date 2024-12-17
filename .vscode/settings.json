@@ -1,0 +1,4 @@
+{
+	//	"javascript.implicitProjectConfig.checkJs": false,
+	"js/ts.implicitProjectConfig.checkJs": false //	TODO: remove for tyescript upgrade
+}
