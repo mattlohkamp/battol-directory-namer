@@ -1,4 +1,6 @@
 {
-	//	"javascript.implicitProjectConfig.checkJs": false,
-	"js/ts.implicitProjectConfig.checkJs": false //	TODO: remove for tyescript upgrade
+	"js/ts.implicitProjectConfig.checkJs": false,
+	"typescript.validate.enable": false,
+	"javascript.suggestionActions.enabled": false,
+	"vue.server.hybridMode": true
 }

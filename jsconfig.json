@@ -3,7 +3,9 @@
 		"checkJs": true,
 		"jsx": "react-jsx",
 		"resolveJsonModule": true,
-		"esModuleInterop": true
+		"esModuleInterop": true,
+		"noImplicitAny": false,
+		"strict": false // Disable all strict TypeScript checks
 	},
 	"exclude": [
 		"node_modules",
