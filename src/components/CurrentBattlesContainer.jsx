@@ -1,8 +1,14 @@
 //	TODO: periodically refresh? or notify of stale data?
 
 import { useEffect, useState } from "react";
-import { APIBattleTypeLabels, BATTLE_TYPE } from "../constants.js";
+import {
+	APIBattleTypeLabels,
+	APICurrentBattlesURL,
+	BATTLE_TYPE,
+} from "../constants.js";
 import ms from "ms";
+import { setBattleURL } from "./battleURLSlice.js";
+import { useDispatch } from "react-redux";
 
 //	on start - notify model that this component needs data
 //	on state change - pull down data to populate
@@ -54,20 +60,19 @@ export default function CurrentBattlesContainer() {
 	const [battles, setBattles] = useState([]);
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState(null);
+	const dispatch = useDispatch();
 
 	useEffect(() => {
 		const fetchItems = async () => {
 			setLoading(true);
 			try {
-				const response = await fetch(
-					"https://battleofthebits.com/api/v1/battle/current"
-				);
+				const response = await fetch(APICurrentBattlesURL());
 				if (!response.ok) {
 					throw new Error("Failed to fetch items");
 				}
 				const data = Array.from(await response.json()).map((battle) => ({
 					id: battle.id,
-					value: battle.profile_url,
+					url: battle.profile_url,
 					label: `${
 						APIBattleTypeLabels[
 							battle.type === BATTLE_TYPE.XHB
@@ -99,7 +104,9 @@ export default function CurrentBattlesContainer() {
 						<button
 							type="button"
 							onClick={() => {
-								//	console.log(battle.value);	//	TODO: send this on up to redux
+								dispatch(setBattleURL(battle.url));
+								const battleId = battle.url.match(/Battle\/(\d+)/)[1];
+								//	dispatch(fetchBattleData(battleId));
 							}}>
 							{battle.label}
 						</button>

@@ -16,3 +16,10 @@ export const APIBattleTypeLabels = [
 	"XHB",
 	"UNKNOWN_4",
 ];
+
+export const APIDomain = "https://battleofthebits.com/";
+export const APIBase = `${APIDomain}api/v1/`;
+export const APIBattleURL = (id) => `${APIBase}battle/load/${id}`;
+export const APICurrentBattlesURL = () => `${APIBase}battle/current`;
+export const APIUserURL = (id) => `${APIBase}botbr/load/${id}`;
+export const getAvatarURL = (avatarURL) => `${APIDomain}${avatarURL}`;

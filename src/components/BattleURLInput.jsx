@@ -18,6 +18,7 @@ export default function BattleURLInput() {
 			onSubmitCapture={(e) => {
 				const battleId = (battleURL.match(battleIdFromBattleURL) ?? []).pop();
 				//	dispatch(fetchBattleData(battleId));
+				e.preventDefault();
 			}}>
 			<label>
 				<span>Posit Battol URL: </span>
@@ -33,7 +34,7 @@ export default function BattleURLInput() {
 				/>
 			</label>
 			<p id="error-message"></p>
-			<button type="submit">Fetch</button>
+			<button type="submit">Supplicate Server</button>
 		</form>
 	);
 }
