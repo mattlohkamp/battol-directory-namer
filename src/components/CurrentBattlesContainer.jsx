@@ -9,6 +9,7 @@ import {
 import ms from "ms";
 import { setBattleURL } from "./battleURLSlice.js";
 import { useDispatch } from "react-redux";
+import { fetchBattleData } from "./battleDataSlice.js";
 
 //	on start - notify model that this component needs data
 //	on state change - pull down data to populate
@@ -106,7 +107,7 @@ export default function CurrentBattlesContainer() {
 							onClick={() => {
 								dispatch(setBattleURL(battle.url));
 								const battleId = battle.url.match(/Battle\/(\d+)/)[1];
-								//	dispatch(fetchBattleData(battleId));
+								dispatch(fetchBattleData(battleId));
 							}}>
 							{battle.label}
 						</button>
