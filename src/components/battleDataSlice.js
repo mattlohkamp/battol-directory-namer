@@ -4,10 +4,10 @@ import { APIBattleURL } from "../constants.js";
 export const fetchBattleData = createAsyncThunk(
 	"battleData/fetchBattleData",
 	async (battleId, { rejectWithValue }) => {
-		console.log("loading battle data for battleId:", battleId);
 		try {
 			const response = await fetch(APIBattleURL(battleId));
 			const data = await response.json();
+			setBattleData(data);
 			return data;
 		} catch (err) {
 			return rejectWithValue(err.response.data);
@@ -22,7 +22,11 @@ const battleDataSlice = createSlice({
 		loading: "idle",
 		error: null,
 	},
-	reducers: {},
+	reducers: {
+		setBattleData(_, action) {
+			return action.payload;
+		},
+	},
 	extraReducers: (builder) => {
 		builder
 			.addCase(fetchBattleData.pending, (state) => {
@@ -39,4 +43,5 @@ const battleDataSlice = createSlice({
 	},
 });
 
+export const { setBattleData } = battleDataSlice.actions;
 export default battleDataSlice.reducer;

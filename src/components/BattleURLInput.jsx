@@ -17,7 +17,7 @@ export default function BattleURLInput() {
 		<form
 			onSubmitCapture={(e) => {
 				const battleId = (battleURL.match(battleIdFromBattleURL) ?? []).pop();
-				//	dispatch(fetchBattleData(battleId));
+				dispatch(fetchBattleData(battleId));
 				e.preventDefault();
 			}}>
 			<label>

@@ -5,7 +5,7 @@ import battleDataSlice from "./components/battleDataSlice.js";
 const store = configureStore({
 	reducer: {
 		battleURL: battleURLSlice,
-		//	battleData: battleDataSlice,
+		battleData: battleDataSlice,
 	},
 });
 
