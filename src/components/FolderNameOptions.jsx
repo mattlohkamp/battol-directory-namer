@@ -2,25 +2,40 @@
 //	TODO: customize folder name generation scheme
 //	https://jqueryui.com/sortable/#default ?
 
+//	TODO: hookup the onchanges
+
 export default function FolderNameOptions() {
 	return (
 		<>
 			<ul id="options">
 				<li>
 					<label>
-						<input type="checkbox" id="option-emoji" checked />
+						<input
+							type="checkbox"
+							id="option-emoji"
+							checked={true}
+							onChange={() => {}}
+						/>
 						<span> allow emoji 💯</span>
 					</label>
 				</li>
 				<li>
 					<label>
-						<input type="checkbox" id="option-underscores" />
+						<input
+							type="checkbox"
+							id="option-underscores"
+							onChange={() => {}}
+						/>
 						<span> convert spaces to underscores</span>
 					</label>
 				</li>
 				<li>
 					<label>
-						<input type="checkbox" id="option-alphanumeric" />
+						<input
+							type="checkbox"
+							id="option-alphanumeric"
+							onChange={() => {}}
+						/>
 						<span> strip non alpha numerics (except underscores)</span>
 					</label>
 				</li>

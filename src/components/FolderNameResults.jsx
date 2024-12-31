@@ -5,8 +5,8 @@ export default function FolderNameResults() {
 			<input
 				type="text"
 				id="folder-name"
-				readonly
-				size="50"
+				readOnly={true}
+				size={50}
 				placeholder="no battle data loaded..."
 			/>
 		</label>
