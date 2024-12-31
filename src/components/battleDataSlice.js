@@ -1,5 +1,10 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { APIBattleURL } from "../constants.js";
+import {
+	createSlice,
+	createAsyncThunk,
+	createSelector,
+} from "@reduxjs/toolkit";
+import { APIBattleURL, BATTLE_TYPE } from "../constants.js";
+import { getXHBSubtypeByDate } from "../utils.js";
 
 export const fetchBattleData = createAsyncThunk(
 	"battleData/fetchBattleData",
@@ -12,6 +17,32 @@ export const fetchBattleData = createAsyncThunk(
 		} catch (err) {
 			return rejectWithValue(err.response.data);
 		}
+	}
+);
+
+export const selectBattleData = (state) => state.battleData.data;
+export const selectBattleDetails = createSelector(
+	selectBattleData,
+	(battle) => {
+		if (!battle) {
+			return undefined;
+		}
+		const details = {
+			type: Number(battle.type),
+			formats: battle.format_tokens, //	array of strings
+			coverArt: battle.cover_art_url,
+			//	TODO: multiple hosts?
+			hostID: battle.botbr_id,
+			title: battle.title,
+			start: new Date(battle.start),
+			end: new Date(battle.end),
+		};
+		details.subtype =
+			battle.type === BATTLE_TYPE.XHB
+				? getXHBSubtypeByDate(details.start, details.end)
+				: null; //	null means we don't know? or n/a?
+		//	await fetchUserById(responseJSON.botbr_id); //	TODO: too much chain of async callbacks
+		return details;
 	}
 );
 
