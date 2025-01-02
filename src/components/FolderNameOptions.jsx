@@ -12,31 +12,53 @@ export default function FolderNameOptions() {
 					<label>
 						<input
 							type="checkbox"
-							id="option-emoji"
+							id="option-allow-emoji"
 							checked={true}
 							onChange={() => {}}
 						/>
-						<span> allow emoji 💯</span>
+						<span>allow emoji 💯</span>
 					</label>
 				</li>
 				<li>
 					<label>
 						<input
 							type="checkbox"
-							id="option-underscores"
+							id="option-convert-spaces-to-underscores"
 							onChange={() => {}}
 						/>
-						<span> convert spaces to underscores</span>
+						<span>convert spaces to underscores</span>
 					</label>
 				</li>
 				<li>
 					<label>
 						<input
 							type="checkbox"
-							id="option-alphanumeric"
+							id="option-stripe-non-alphanumerics"
 							onChange={() => {}}
 						/>
-						<span> strip non alpha numerics (except underscores)</span>
+						<span>strip non alpha numerics (except underscores)</span>
+					</label>
+				</li>
+				<li>
+					<label>
+						<input
+							type="checkbox"
+							id="option-hide-multiple-formats"
+							checked={true}
+							onChange={() => {}}
+						/>
+						<span>hide multiple formats</span>
+					</label>
+				</li>
+				<li>
+					<label>
+						<input
+							type="checkbox"
+							id="option-use-unix-timestamps"
+							checked={true}
+							onChange={() => {}}
+						/>
+						<span>use unix timestamps</span>
 					</label>
 				</li>
 			</ul>
