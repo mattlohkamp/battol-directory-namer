@@ -5,6 +5,21 @@ import ms from "ms";
  */
 export const battleIdFromBattleURL = /\/Battle\/(\d+)/;
 
+export const matchEmoji = /\p{RGI_Emoji}/gv;
+function stripEmoji(string) {
+	return string.replaceAll(matchEmoji, "");
+}
+
+export function replaceSpacesWithUnderscore(string) {
+	return string.replaceAll(" ", "_");
+}
+
+export const matchNonAlphaNumerics = /[^0-9a-zA-Z_]/g;
+
+function stripNonAlphaNumerics(string) {
+	return string.replaceAll(matchNonAlphaNumerics, "");
+}
+
 //	TODO:	guess at major type by time period - distinguish monthlies from quarterlies, and possibly other special cases like advent calendar, halloween, etc
 
 const getXHBSubtypeByDateDefaultOptions = {
@@ -47,3 +62,31 @@ export const getXHBSubtypeByDate = (start, end, options) => {
 		return `${durationMs / Number(ms("1h"))}`;
 	}
 };
+
+export function generateFolderName({
+	title,
+	site,
+	id,
+	subtype,
+	formats,
+	options,
+}) {
+	//	title is the only field that can contain emoji,
+	//	and may include trailing space(s)
+	//	so we need to deal with it first
+	const modifiedTitle = (
+		options["option-emoji"] ? title : stripEmoji(title)
+	).trim();
+
+	let folderName = `${site}#${id}${
+		subtype ? ` ${subtype}` : ""
+	} ${modifiedTitle} (${formats.join(", ")})`;
+
+	if (options["option-underscores"] === true) {
+		folderName = replaceSpacesWithUnderscore(folderName);
+	}
+	if (options["option-alphanumeric"] === true) {
+		folderName = stripNonAlphaNumerics(folderName);
+	}
+	return folderName;
+}

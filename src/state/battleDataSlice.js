@@ -4,7 +4,7 @@ import {
 	createSelector,
 } from "@reduxjs/toolkit";
 import { APIBattleURL, BATTLE_TYPE } from "../constants.js";
-import { getXHBSubtypeByDate } from "../utils.js";
+import { generateFolderName, getXHBSubtypeByDate } from "../utils.js";
 
 export const fetchBattleData = createAsyncThunk(
 	"battleData/fetchBattleData",
@@ -21,6 +21,7 @@ export const fetchBattleData = createAsyncThunk(
 );
 
 export const selectBattleData = (state) => state.battleData.data;
+
 export const selectBattleDetails = createSelector(
 	selectBattleData,
 	(battle) => {
@@ -43,6 +44,28 @@ export const selectBattleDetails = createSelector(
 				: null; //	null means we don't know? or n/a?
 		//	await fetchUserById(responseJSON.botbr_id); //	TODO: too much chain of async callbacks
 		return details;
+	}
+);
+
+export const selectDirectoryName = createSelector(
+	selectBattleDetails,
+	(details) => {
+		return details
+			? generateFolderName({
+					title: details.title,
+					site: "BotB",
+					id: details.hostID,
+					subtype: details.subtype,
+					formats: details.formats,
+					options: {
+						allowEmoji: true,
+						convertSpacesToUnderscores: true,
+						stripNonAlphaNumerics: true,
+						hideMultipleFormats: true,
+						useUnixTimestamps: true,
+					},
+			  })
+			: null;
 	}
 );
 

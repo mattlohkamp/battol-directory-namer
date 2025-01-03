@@ -6,9 +6,9 @@ import {
 	APICurrentBattlesURL,
 	BATTLE_TYPE,
 } from "../constants.js";
-import { setBattleURL } from "./battleURLSlice.js";
+import { setBattleURL } from "../state/battleURLSlice.js";
 import { useDispatch } from "react-redux";
-import { fetchBattleData } from "./battleDataSlice.js";
+import { fetchBattleData } from "../state/battleDataSlice.js";
 import { getXHBSubtypeByDate } from "../utils.js";
 
 //	on start - notify model that this component needs data

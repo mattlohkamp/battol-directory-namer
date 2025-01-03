@@ -1,5 +1,5 @@
 import { useSelector } from "react-redux";
-import { selectBattleDetails } from "./battleDataSlice.js";
+import { selectBattleDetails } from "../state/battleDataSlice.js";
 import { APIBattleTypeLabels } from "../constants.js";
 
 export default function BattleDetails() {

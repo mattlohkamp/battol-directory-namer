@@ -1,6 +1,6 @@
 import { useDispatch, useSelector } from "react-redux"; // Example: if using Redux for global state
-import { setBattleURL } from "./battleURLSlice.js";
-import { fetchBattleData } from "./battleDataSlice.js";
+import { setBattleURL } from "../state/battleURLSlice.js";
+import { fetchBattleData } from "../state/battleDataSlice.js";
 import { battleIdFromBattleURL } from "../utils.js";
 
 //	urlInputEl.pattern = matchBattleId;	//	TODO: test html input pattern stuff more?

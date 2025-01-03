@@ -1,6 +1,6 @@
 import { configureStore } from "@reduxjs/toolkit";
-import battleURLSlice from "./components/battleURLSlice.js";
-import battleDataSlice from "./components/battleDataSlice.js";
+import battleURLSlice from "./battleURLSlice.js";
+import battleDataSlice from "./battleDataSlice.js";
 
 const store = configureStore({
 	reducer: {
