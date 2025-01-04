@@ -1,5 +1,9 @@
 {
 	"compilerOptions": {
+		"lib": [
+			"es2017",
+			"dom"
+		],
 		"checkJs": true,
 		"jsx": "react-jsx",
 		"resolveJsonModule": true,
