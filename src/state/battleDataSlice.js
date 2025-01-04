@@ -4,7 +4,7 @@ import {
 	createSelector,
 } from "@reduxjs/toolkit";
 import { APIBattleURL, BATTLE_TYPE } from "../constants.js";
-import { generateFolderName, getXHBSubtypeByDate } from "../utils.js";
+import { generateDirectoryName, getXHBSubtypeByDate } from "../utils.js";
 import { selectOptions } from "./optionsSlice.js";
 
 export const fetchBattleData = createAsyncThunk(
@@ -54,7 +54,7 @@ export const selectDirectoryName = createSelector(
 	selectOptions,
 	(details, options) => {
 		return details
-			? generateFolderName({
+			? generateDirectoryName({
 					title: details.title,
 					site: "BotB",
 					id: details.battleID,

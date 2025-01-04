@@ -1,5 +1,5 @@
 //	TODO: datestamp formatting options
-//	TODO: customize folder name generation scheme
+//	TODO: customize directory name generation scheme
 //	https://jqueryui.com/sortable/#default ?
 
 import { useDispatch, useSelector } from "react-redux";
@@ -7,7 +7,7 @@ import { setOptions } from "../state/optionsSlice.js";
 
 //	TODO: hookup the onchanges
 
-export default function FolderNameOptions() {
+export default function DirectoryNameOptions() {
 	const dispatch = useDispatch();
 	const allowEmoji = useSelector(
 		/**
@@ -97,7 +97,7 @@ export default function FolderNameOptions() {
 					</label>
 				</li>
 			</ul>
-			<select id="folder-name-tokens" multiple>
+			<select id="directory-name-tokens" multiple>
 				<option>Site</option>
 				<option>Type</option>
 				<option>Subtype</option>

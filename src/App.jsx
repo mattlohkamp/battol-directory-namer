@@ -1,8 +1,8 @@
 import CurrentBattlesContainer from "./components/CurrentBattlesContainer.jsx";
 import BattleURLInput from "./components/BattleURLInput.jsx";
 import BattleDetails from "./components/BattleDetails.jsx";
-import FolderNameOptions from "./components/FolderNameOptions.jsx";
-import FolderNameResults from "./components/FolderNameResults.jsx";
+import DirectoryNameOptions from "./components/DirectoryNameOptions.jsx";
+import DirectoryNameResults from "./components/DirectoryNameResults.jsx";
 
 export default function App() {
 	return (
@@ -10,8 +10,8 @@ export default function App() {
 			<CurrentBattlesContainer />
 			<BattleURLInput />
 			<BattleDetails />
-			<FolderNameOptions />
-			<FolderNameResults />
+			<DirectoryNameOptions />
+			<DirectoryNameResults />
 		</>
 	);
 }

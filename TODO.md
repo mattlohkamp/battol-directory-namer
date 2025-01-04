@@ -1,5 +1,6 @@
-- [] **consistent naming** replace 'folder' with 'directory' globally
+- [x] **consistent naming** replace 'folder' with 'directory' globally
 - [] **typing** convert codebase to typescript, remove redundant JSDOC
 - [] **testing** unit testing, especially in util funcs
 - [] **testing** api mocks
 - [] **consistent typing** evaluate usage of null versus undefined throughout (undefined is incidentally nothing, null is nothing on purpose?)
+- [] **CI** set up github actions to build and host latest

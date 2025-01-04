@@ -1,18 +1,18 @@
 import { useSelector } from "react-redux";
 import { selectDirectoryName } from "../state/battleDataSlice.js";
 
-export default function FolderNameResults() {
-	const folderName = useSelector(selectDirectoryName);
+export default function DirectoryNameResults() {
+	const directoryName = useSelector(selectDirectoryName);
 	return (
 		<label>
-			<span>Folder Name: </span>
+			<span>Directory Name: </span>
 			<input
 				type="text"
-				id="folder-name"
+				id="directory-name"
 				readOnly={true}
 				size={50}
 				placeholder="no battle data loaded..."
-				value={folderName}
+				value={directoryName}
 			/>
 		</label>
 	);

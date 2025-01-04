@@ -65,7 +65,7 @@ export const getXHBSubtypeByDate = (start, end, options) => {
 };
 
 //	TODO: unit test
-export function generateFolderName({
+export function generateDirectoryName({
 	title,
 	site,
 	id,
@@ -89,15 +89,15 @@ export function generateFolderName({
 
 	const categoryString = `${site}#${id}${subtype ? ` ${subtype}` : ""}`;
 
-	let folderName = [categoryString, modifiedTitle, formatsString]
+	let directoryName = [categoryString, modifiedTitle, formatsString]
 		.filter((part) => part !== null)
 		.join(" ");
 
 	if (options["convertSpacesToUnderscores"] === true) {
-		folderName = replaceSpacesWithUnderscore(folderName);
+		directoryName = replaceSpacesWithUnderscore(directoryName);
 	}
 	if (options["stripNonAlphanumerics"] === true) {
-		folderName = stripNonAlphaNumerics(folderName);
+		directoryName = stripNonAlphaNumerics(directoryName);
 	}
-	return folderName;
+	return directoryName;
 }
