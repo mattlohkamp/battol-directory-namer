@@ -5,6 +5,7 @@ import {
 } from "@reduxjs/toolkit";
 import { APIBattleURL, BATTLE_TYPE } from "../constants.js";
 import { generateFolderName, getXHBSubtypeByDate } from "../utils.js";
+import { selectOptions } from "./optionsSlice.js";
 
 export const fetchBattleData = createAsyncThunk(
 	"battleData/fetchBattleData",
@@ -34,6 +35,7 @@ export const selectBattleDetails = createSelector(
 			coverArt: battle.cover_art_url,
 			//	TODO: multiple hosts?
 			hostID: battle.botbr_id,
+			battleID: battle.id,
 			title: battle.title,
 			start: new Date(battle.start),
 			end: new Date(battle.end),
@@ -49,21 +51,16 @@ export const selectBattleDetails = createSelector(
 
 export const selectDirectoryName = createSelector(
 	selectBattleDetails,
-	(details) => {
+	selectOptions,
+	(details, options) => {
 		return details
 			? generateFolderName({
 					title: details.title,
 					site: "BotB",
-					id: details.hostID,
+					id: details.battleID,
 					subtype: details.subtype,
 					formats: details.formats,
-					options: {
-						allowEmoji: true,
-						convertSpacesToUnderscores: true,
-						stripNonAlphaNumerics: true,
-						hideMultipleFormats: true,
-						useUnixTimestamps: true,
-					},
+					options,
 			  })
 			: null;
 	}

@@ -26,6 +26,7 @@ const getXHBSubtypeByDateDefaultOptions = {
 	useOfor1: true,
 	currentDate: null,
 };
+//	TODO: unit test
 export const getXHBSubtypeByDate = (start, end, options) => {
 	options = {
 		...getXHBSubtypeByDateDefaultOptions,
@@ -63,6 +64,7 @@ export const getXHBSubtypeByDate = (start, end, options) => {
 	}
 };
 
+//	TODO: unit test
 export function generateFolderName({
 	title,
 	site,
@@ -71,21 +73,30 @@ export function generateFolderName({
 	formats,
 	options,
 }) {
+	//	TODO:	implement useUnixTimestamps for date content
+
 	//	title is the only field that can contain emoji,
 	//	and may include trailing space(s)
 	//	so we need to deal with it first
 	const modifiedTitle = (
-		options["option-emoji"] ? title : stripEmoji(title)
+		options["allowEmoji"] ? title : stripEmoji(title)
 	).trim();
 
-	let folderName = `${site}#${id}${
-		subtype ? ` ${subtype}` : ""
-	} ${modifiedTitle} (${formats.join(", ")})`;
+	const formatsString =
+		options["hideMultipleFormats"] && formats.length > 1
+			? null
+			: `(${formats.join(", ")})`;
 
-	if (options["option-underscores"] === true) {
+	const categoryString = `${site}#${id}${subtype ? ` ${subtype}` : ""}`;
+
+	let folderName = [categoryString, modifiedTitle, formatsString]
+		.filter((part) => part !== null)
+		.join(" ");
+
+	if (options["convertSpacesToUnderscores"] === true) {
 		folderName = replaceSpacesWithUnderscore(folderName);
 	}
-	if (options["option-alphanumeric"] === true) {
+	if (options["stripNonAlphanumerics"] === true) {
 		folderName = stripNonAlphaNumerics(folderName);
 	}
 	return folderName;
