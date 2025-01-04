@@ -15,6 +15,8 @@ import { getXHBSubtypeByDate } from "../utils.js";
 //	on state change - pull down data to populate
 
 export default function CurrentBattlesContainer() {
+	//	TODO: the battle list is the only one that needs this data - would it be better to keep it anchored here, with the component that needs it? or should it be pulled out into a thunk that populates the global state?
+
 	const [battles, setBattles] = useState([]);
 	const [loading, setLoading] = useState(false);
 	const [error, setError] = useState(null);
