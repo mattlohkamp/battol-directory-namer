@@ -17,6 +17,19 @@ export const APIBattleTypeLabels = [
 	"UNKNOWN_4",
 ];
 
+export const TokenOptionKeys = {
+	BLANK: "blank",
+	SITE_NAME: "siteName",
+	BATTLE_NAME: "battleName",
+	BATTLE_ID: "battleID",
+	BATTLE_TYPE: "battleType",
+	BATTLE_SUBTYPE: "battleSubtype",
+	BATTLE_FORMATS: "battleFormats",
+	BATTLE_HOST_ID: "battleHostID",
+	BATTLE_HOST_NAME: "battleHostName",
+	BATTLE_START_DATE: "battleStartDate",
+};
+
 export const APIDomain = "https://battleofthebits.com/";
 export const APIBase = `${APIDomain}api/v1/`;
 export const APIBattleURL = (id) => `${APIBase}battle/load/${id}`;
