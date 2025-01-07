@@ -4,6 +4,7 @@
 	"description": "a quick util for generating consistent naming schemes for botb battle directories",
 	"type": "module",
 	"scripts": {
+		"start": "npm run dev",
 		"dev": "vite",
 		"build": "vite build"
 	},
