@@ -5,7 +5,7 @@ import ms from "ms";
  */
 export const battleIdFromBattleURL = /\/Battle\/(\d+)/;
 
-export const matchEmoji = /\p{RGI_Emoji}/gv;
+export const matchEmoji = /\p{RGI_Emoji}/gv; //	TODO: double check this works cross browser / platform
 export function stripEmoji(string) {
 	return string.replaceAll(matchEmoji, "");
 }

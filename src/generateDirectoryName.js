@@ -11,8 +11,6 @@ export default function generateDirectoryName(
 	directoryNameTokens,
 	options
 ) {
-	//	TODO:	implement useUnixTimestamps for date content
-
 	let directoryName = "";
 	const preID = options.includePoundBeforeID ? "#" : "";
 

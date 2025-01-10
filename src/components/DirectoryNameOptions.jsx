@@ -1,5 +1,3 @@
-//	TODO: datestamp formatting options
-
 import { useDispatch, useSelector } from "react-redux";
 import { setOptions } from "../state/optionsSlice.js";
 

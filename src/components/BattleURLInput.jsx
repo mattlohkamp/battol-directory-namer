@@ -4,7 +4,7 @@ import { fetchBattleData } from "../state/battleDataSlice.js";
 import { battleIdFromBattleURL } from "../utils.js";
 import { APIDomain } from "../constants.js";
 
-//	urlInputEl.pattern = matchBattleId;	//	TODO: test html input pattern stuff more?
+// TODO: pattern={battleIdFromBattleURL.source}
 
 export default function BattleURLInput() {
 	const dispatch = useDispatch();
@@ -34,8 +34,13 @@ export default function BattleURLInput() {
 					}}
 				/>
 			</label>
-			<p id="error-message"></p>
-			<button type="submit">Supplicate Server</button>
+			{battleURL ? (
+				<button type="submit">Supplicate Server</button>
+			) : (
+				<button type="submit" disabled>
+					Supplicate Server
+				</button>
+			)}
 		</form>
 	);
 }
