@@ -1,7 +1,8 @@
 //	https://jqueryui.com/sortable/#default ?
 
-import { useState } from "react";
 import { TokenOptionKeys } from "../constants.js";
+import { useDispatch, useSelector } from "react-redux";
+import { setDirectoryNameTokens } from "../state/directoryNameTokensSlice.js";
 
 /*
 	each line item is a select dropdown of tokens
@@ -25,39 +26,34 @@ const tokenOptions = {
 };
 
 export default function DirectoryNameTemplate() {
-	const [tokenListItems, setTokenListItems] = useState([
-		TokenOptionKeys.SITE_NAME,
-		TokenOptionKeys.BATTLE_ID,
-		TokenOptionKeys.BATTLE_SUBTYPE,
-		TokenOptionKeys.BATTLE_NAME,
-		TokenOptionKeys.BATTLE_FORMATS,
-	]);
+	const dispatch = useDispatch();
+	const directoryNameTokens = useSelector(
+		/**
+		 * @param {{directoryNameTokens:string[]}} state
+		 */ (state) => state.directoryNameTokens
+	);
 
 	const onClickAddButton = () =>
-		setTokenListItems([...tokenListItems, TokenOptionKeys.BLANK]);
+		dispatch(
+			setDirectoryNameTokens([...directoryNameTokens, TokenOptionKeys.BLANK])
+		);
 
 	const onChangeTokenListItem = (i) => (e) => {
-		const _tokenListItems = [...tokenListItems];
-		_tokenListItems[i] = e.target.value;
-		setTokenListItems(_tokenListItems);
+		const _directoryNameTokens = [...directoryNameTokens];
+		_directoryNameTokens[i] = e.target.value;
+		dispatch(setDirectoryNameTokens(_directoryNameTokens));
 	};
 
 	const onClickRemoveButton = (i) => () => {
-		const _tokenListItems = [...tokenListItems];
-		_tokenListItems.splice(
+		const _directoryNameTokens = [...directoryNameTokens];
+		_directoryNameTokens.splice(
 			//	remove the item at index i (the index of the entry of the button clicked)
 			i,
 			1,
-			...(_tokenListItems.length === 1 ? [TokenOptionKeys.BLANK] : []) //	if we're removing the last item, replace it with a blank item
+			...(_directoryNameTokens.length === 1 ? [TokenOptionKeys.BLANK] : []) //	if we're removing the last item, replace it with a blank item
 		);
-		setTokenListItems(_tokenListItems);
+		dispatch(setDirectoryNameTokens(_directoryNameTokens));
 	};
-
-	const renderTokenOption = ([value, label]) => (
-		<option value={value} key={value}>
-			{label}
-		</option>
-	);
 
 	const renderTokenListItem = (value, i) => (
 		<li key={i}>
@@ -65,7 +61,11 @@ export default function DirectoryNameTemplate() {
 				<option value={TokenOptionKeys.BLANK} disabled hidden>
 					Select a token
 				</option>
-				{Object.entries(tokenOptions).map(renderTokenOption)}
+				{Object.entries(tokenOptions).map(([value, label]) => (
+					<option value={value} key={value}>
+						{label}
+					</option>
+				))}
 			</select>
 			<button type="button" onClick={onClickRemoveButton(i)}>
 				Remove
@@ -75,7 +75,7 @@ export default function DirectoryNameTemplate() {
 
 	return (
 		<form>
-			<ol>{tokenListItems.map(renderTokenListItem)}</ol>
+			<ol>{directoryNameTokens.map(renderTokenListItem)}</ol>
 			<button type="button" name="add" onClick={onClickAddButton}>
 				Add Token
 			</button>
