@@ -6,6 +6,7 @@ export const defaultOptions = {
 	stripNonAlphanumerics: false,
 	hideMultipleFormats: true,
 	useUnixTimestamps: true,
+	includePoundBeforeID: true,
 };
 
 const optionsSlice = createSlice({

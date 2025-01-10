@@ -30,6 +30,11 @@ export default function DirectoryNameOptions() {
 		 * @param {{options:{useUnixTimestamps:boolean}}} state
 		 */ (state) => state.options.useUnixTimestamps
 	);
+	const includePoundBeforeID = useSelector(
+		/**
+		 * @param {{options:{includePoundBeforeID:boolean}}} state
+		 */ (state) => state.options.includePoundBeforeID
+	);
 	const onChangeCheckbox = (key) => (e) => {
 		dispatch(setOptions({ [key]: e.target.checked }));
 	};
@@ -89,6 +94,17 @@ export default function DirectoryNameOptions() {
 						onChange={onChangeCheckbox("useUnixTimestamps")}
 					/>
 					<span>use unix timestamps</span>
+				</label>
+			</li>
+			<li>
+				<label>
+					<input
+						type="checkbox"
+						id="includePoundBeforeID"
+						checked={includePoundBeforeID}
+						onChange={onChangeCheckbox("includePoundBeforeID")}
+					/>
+					<span># before IDs</span>
 				</label>
 			</li>
 		</ul>
