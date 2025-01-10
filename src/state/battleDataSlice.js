@@ -4,8 +4,7 @@ import {
 	createSelector,
 } from "@reduxjs/toolkit";
 import { APIBattleURL, BATTLE_TYPE } from "../constants.js";
-import { generateDirectoryName, getXHBSubtypeByDate } from "../utils.js";
-import { selectOptions } from "./optionsSlice.js";
+import { getXHBSubtypeByDate } from "../utils.js";
 
 export const fetchBattleData = createAsyncThunk(
 	"battleData/fetchBattleData",
@@ -46,23 +45,6 @@ export const selectBattleDetails = createSelector(
 				: null; //	null means we don't know? or n/a?
 		//	await fetchUserById(responseJSON.botbr_id); //	TODO: too much chain of async callbacks
 		return details;
-	}
-);
-
-export const selectDirectoryName = createSelector(
-	selectBattleDetails,
-	selectOptions,
-	(details, options) => {
-		return details
-			? generateDirectoryName({
-					title: details.title,
-					site: "BotB",
-					id: details.battleID,
-					subtype: details.subtype,
-					formats: details.formats,
-					options,
-			  })
-			: null;
 	}
 );
 

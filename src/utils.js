@@ -6,7 +6,7 @@ import ms from "ms";
 export const battleIdFromBattleURL = /\/Battle\/(\d+)/;
 
 export const matchEmoji = /\p{RGI_Emoji}/gv;
-function stripEmoji(string) {
+export function stripEmoji(string) {
 	return string.replaceAll(matchEmoji, "");
 }
 
@@ -16,7 +16,7 @@ export function replaceSpacesWithUnderscore(string) {
 
 export const matchNonAlphaNumerics = /[^0-9a-zA-Z_]/g;
 
-function stripNonAlphaNumerics(string) {
+export function stripNonAlphaNumerics(string) {
 	return string.replaceAll(matchNonAlphaNumerics, "");
 }
 
@@ -63,41 +63,3 @@ export const getXHBSubtypeByDate = (start, end, options) => {
 		return `${durationMs / Number(ms("1h"))}`;
 	}
 };
-
-//	TODO: unit test
-export function generateDirectoryName({
-	title,
-	site,
-	id,
-	subtype,
-	formats,
-	options,
-}) {
-	//	TODO:	implement useUnixTimestamps for date content
-
-	//	title is the only field that can contain emoji,
-	//	and may include trailing space(s)
-	//	so we need to deal with it first
-	const modifiedTitle = (
-		options["allowEmoji"] ? title : stripEmoji(title)
-	).trim();
-
-	const formatsString =
-		options["hideMultipleFormats"] && formats.length > 1
-			? null
-			: `(${formats.join(", ")})`;
-
-	const categoryString = `${site}#${id}${subtype ? ` ${subtype}` : ""}`;
-
-	let directoryName = [categoryString, modifiedTitle, formatsString]
-		.filter((part) => part !== null)
-		.join(" ");
-
-	if (options["convertSpacesToUnderscores"] === true) {
-		directoryName = replaceSpacesWithUnderscore(directoryName);
-	}
-	if (options["stripNonAlphanumerics"] === true) {
-		directoryName = stripNonAlphaNumerics(directoryName);
-	}
-	return directoryName;
-}

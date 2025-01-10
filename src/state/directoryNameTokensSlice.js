@@ -19,6 +19,8 @@ const directoryNameTokensSlice = createSlice({
 	},
 });
 
+export const selectDirectoryNameTokens = (state) => state.directoryNameTokens;
+
 export const { setDirectoryNameTokens } = directoryNameTokensSlice.actions;
 
 export default directoryNameTokensSlice.reducer;

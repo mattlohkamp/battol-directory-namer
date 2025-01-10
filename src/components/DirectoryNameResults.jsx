@@ -1,5 +1,20 @@
 import { useSelector } from "react-redux";
-import { selectDirectoryName } from "../state/battleDataSlice.js";
+import { createSelector } from "reselect";
+import { selectBattleDetails } from "../state/battleDataSlice.js";
+import { selectOptions } from "../state/optionsSlice.js";
+import { selectDirectoryNameTokens } from "../state/directoryNameTokensSlice.js";
+import generateDirectoryName from "../generateDirectoryName.js";
+
+const selectDirectoryName = createSelector(
+	selectBattleDetails,
+	selectDirectoryNameTokens,
+	selectOptions,
+	(battleDetails, directoryNameTokens, options) => {
+		return battleDetails && directoryNameTokens.length > 0 && options
+			? generateDirectoryName(battleDetails, directoryNameTokens, options)
+			: null;
+	}
+);
 
 export default function DirectoryNameResults() {
 	const directoryName = useSelector(selectDirectoryName); //	null if battle details unavailable
