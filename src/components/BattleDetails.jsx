@@ -1,26 +1,29 @@
 import { useSelector } from "react-redux";
 import { selectBattleDetails } from "../state/battleDataSlice.js";
-import { APIBattleTypeLabels } from "../constants.js";
+import { APIBattleTypeLabels, getUserProfileURL } from "../constants.js";
 
 export default function BattleDetails() {
 	const battleDetails = useSelector(selectBattleDetails);
 	return battleDetails ? (
 		<>
-			{/*	TODO: link images to battle and user pages	*/}
-			<img
-				id="host-avatar"
-				width="150"
-				src={battleDetails.hostAvatar}
-				alt={battleDetails.host}
-			/>
-			<img
-				id="battle-cover-art"
-				width="150"
-				src={battleDetails.coverArt}
-				alt={`${battleDetails.title} (${
-					APIBattleTypeLabels[battleDetails.type]
-				})`}
-			/>
+			<a href={getUserProfileURL(battleDetails.host)}>
+				<img
+					id="host-avatar"
+					width="150"
+					src={battleDetails.hostAvatar}
+					alt={battleDetails.host}
+				/>
+			</a>
+			<a href={battleDetails.url}>
+				<img
+					id="battle-cover-art"
+					width="150"
+					src={battleDetails.coverArt}
+					alt={`${battleDetails.title} (${
+						APIBattleTypeLabels[battleDetails.type]
+					})`}
+				/>
+			</a>
 			<dl>
 				<div id="battle-site">
 					<dt>Site</dt>
@@ -41,8 +44,11 @@ export default function BattleDetails() {
 				</div>
 				<div id="battle-host">
 					<dt>Host</dt>
-					{/*	TODO: link to profile URL	*/}
-					<dd>{battleDetails.host ?? `BotBr ID#${battleDetails.hostID}`}</dd>
+					<dd>
+						<a href={getUserProfileURL(battleDetails.host)}>
+							{battleDetails.host ?? `BotBr ID#${battleDetails.hostID}`}
+						</a>
+					</dd>
 				</div>
 				<div id="battle-title">
 					<dt>Title</dt>
@@ -50,7 +56,7 @@ export default function BattleDetails() {
 				</div>
 				<div id="battle-formats">
 					<dt>Format(s)</dt>
-					{/*	TODO: include format icons?	*/}
+					{/*	TODO: include format icons, link to format lyceum pages?	*/}
 					<dd>{battleDetails.formats.join(", ")}</dd>
 				</div>
 				{/*	TODO: break out start / end elements into more granular segments?	*/}
@@ -64,5 +70,7 @@ export default function BattleDetails() {
 				</div>
 			</dl>
 		</>
-	) : undefined; //	TODO: loading / error / empty state
+	) : (
+		<p>loading...</p>
+	); //	TODO: loading / error / empty state
 }

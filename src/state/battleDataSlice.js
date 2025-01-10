@@ -32,18 +32,18 @@ export const selectBattleDetails = createSelector(
 			type: Number(battle.type),
 			formats: battle.format_tokens, //	array of strings
 			coverArt: battle.cover_art_url,
-			//	TODO: multiple hosts?
+			host: battle.hosts_names,
 			hostID: battle.botbr_id,
 			battleID: battle.id,
 			title: battle.title,
 			start: new Date(battle.start),
 			end: new Date(battle.end),
+			url: battle.url,
 		};
 		details.subtype =
 			battle.type === BATTLE_TYPE.XHB
 				? getXHBSubtypeByDate(details.start, details.end)
 				: null; //	null means we don't know? or n/a?
-		//	await fetchUserById(responseJSON.botbr_id); //	TODO: too much chain of async callbacks
 		return details;
 	}
 );

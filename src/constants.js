@@ -36,3 +36,5 @@ export const APIBattleURL = (id) => `${APIBase}battle/load/${id}`;
 export const APICurrentBattlesURL = () => `${APIBase}battle/current`;
 export const APIUserURL = (id) => `${APIBase}botbr/load/${id}`;
 export const getAvatarURL = (avatarURL) => `${APIDomain}${avatarURL}`;
+export const getUserProfileURL = (username) =>
+	`${APIDomain}barracks/Profile/${username}`;
