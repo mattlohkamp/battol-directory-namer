@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import {
 	APIBattleTypeLabels,
 	APICurrentBattlesURL,
@@ -41,8 +41,12 @@ export default function CurrentBattlesContainer() {
 		}
 	};
 
+	let battlesAPICallInitialized = useRef(false); //	TODO: this feels unwieldy, maybe use a custom hook or just move the api call up to global state?
 	useEffect(() => {
-		fetchItems();
+		if (!battlesAPICallInitialized.current) {
+			fetchItems();
+			battlesAPICallInitialized.current = true;
+		}
 	}, []);
 
 	//	TODO: if empty?
@@ -64,7 +68,7 @@ export default function CurrentBattlesContainer() {
 									type="button"
 									onClick={() => {
 										dispatch(setBattleURL(battle.url));
-										const battleId = battle.url.match(/Battle\/(\d+)/)[1];
+										const battleId = battle.url.match(/Battle\/(\d+)/)[1]; //	TODO: should this actually be a selector? defining a temp variable in an anonymous function doesn't seem smart
 										dispatch(fetchBattleData(battleId));
 									}}>
 									{battle.label}
