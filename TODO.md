@@ -1,6 +1,8 @@
 - [x] **consistent naming** replace 'folder' with 'directory' globally
 - [ ] **typing** convert codebase to typescript, remove redundant JSDOC
+- [ ] **consistent typing** evaluate usage of null versus undefined throughout (undefined is incidentally nothing / 'missing', null is nothing on purpose?)
 - [ ] **testing** unit testing, especially in util funcs
 - [ ] **testing** api mocks
-- [ ] **consistent typing** evaluate usage of null versus undefined throughout (undefined is incidentally nothing, null is nothing on purpose?)
+- [ ] **session state** save cookies or similar to preserve user options and string templating
+- [ ] **webhost** figure out hosting situation
 - [ ] **CI** set up github actions to build and host latest
