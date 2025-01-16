@@ -1,23 +1,18 @@
 import { useDispatch, useSelector } from "react-redux"; // Example: if using Redux for global state
-import { setBattleURL } from "../state/battleURLSlice.js";
+import { selectBattleURL, setBattleURL } from "../state/battleURLSlice.js";
 import { fetchBattleData } from "../state/battleDataSlice.js";
-import { battleIdFromBattleURL } from "../utils.js";
+import { MatchBattleIdFromBattleURL } from "../utils.js";
 import { APIDomain } from "../constants.js";
-
-// TODO: pattern={battleIdFromBattleURL.source}
 
 export default function BattleURLInput() {
 	const dispatch = useDispatch();
-
-	const battleURL = useSelector(
-		/**
-		 * @param {{battleURL: string}} state
-		 */ (state) => state.battleURL
-	);
+	const battleURL = useSelector(selectBattleURL);
 	return (
 		<form
 			onSubmitCapture={(e) => {
-				const battleId = (battleURL.match(battleIdFromBattleURL) ?? []).pop();
+				const battleId = (
+					battleURL.match(MatchBattleIdFromBattleURL) ?? []
+				).pop();
 				dispatch(fetchBattleData(battleId));
 				e.preventDefault();
 			}}>
@@ -28,7 +23,7 @@ export default function BattleURLInput() {
 					placeholder={`${APIDomain}arena/Battle/1234/MainScreen/EXAMPLE`}
 					size={100}
 					autoFocus
-					value={battleURL}
+					value={battleURL ?? ""}
 					onChange={(e) => {
 						dispatch(setBattleURL(e.target.value));
 					}}

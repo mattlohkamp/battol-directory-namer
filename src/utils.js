@@ -3,7 +3,7 @@ import ms from "ms";
 /**
  * @constant {RegExp} battleIdFromBattleURL - takes a valid battle URL and extracts the battle ID
  */
-export const battleIdFromBattleURL = /\/Battle\/(\d+)/;
+export const MatchBattleIdFromBattleURL = /\/Battle\/(\d+)/;
 
 export const matchEmoji = /\p{RGI_Emoji}/gv; //	TODO: double check this works cross browser / platform
 export function stripEmoji(string) {

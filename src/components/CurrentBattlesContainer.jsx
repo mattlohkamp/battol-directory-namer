@@ -4,10 +4,11 @@ import {
 	APICurrentBattlesURL,
 	BATTLE_TYPE,
 } from "../constants.js";
-import { setBattleURL } from "../state/battleURLSlice.js";
+import { selectBattleID, setBattleURL } from "../state/battleURLSlice.js";
 import { useDispatch } from "react-redux";
 import { fetchBattleData } from "../state/battleDataSlice.js";
 import { getXHBSubtypeByDate } from "../utils.js";
+import store from "./../state/store";
 
 export default function CurrentBattlesContainer() {
 	const [battles, setBattles] = useState([]);
@@ -68,8 +69,7 @@ export default function CurrentBattlesContainer() {
 									type="button"
 									onClick={() => {
 										dispatch(setBattleURL(battle.url));
-										const battleId = battle.url.match(/Battle\/(\d+)/)[1]; //	TODO: should this actually be a selector? defining a temp variable in an anonymous function doesn't seem smart
-										dispatch(fetchBattleData(battleId));
+										dispatch(fetchBattleData(selectBattleID(store.getState())));
 									}}>
 									{battle.label}
 								</button>
