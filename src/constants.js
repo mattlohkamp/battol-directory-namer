@@ -1,4 +1,5 @@
 //	double-dipping these feels hacky, I miss typescript enums
+//	TODO: test + verify values - MAJOR + XHB appear to be the only two currently in use
 
 export const BATTLE_TYPE = {
 	MAJOR: 0,
@@ -9,7 +10,6 @@ export const BATTLE_TYPE = {
 };
 
 export const APIBattleTypeLabels = [
-	//	TODO: test + verify values
 	"MAJOR",
 	"CAMPAIGN",
 	"UNKNOWN_2",

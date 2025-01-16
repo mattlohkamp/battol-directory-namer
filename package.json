@@ -1,6 +1,6 @@
 {
 	"name": "battol-directory-namer",
-	"version": ".9",
+	"version": ".91",
 	"description": "a quick util for generating consistent naming schemes for botb battle directories",
 	"type": "module",
 	"scripts": {
