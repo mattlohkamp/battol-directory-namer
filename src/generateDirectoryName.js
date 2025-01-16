@@ -1,4 +1,4 @@
-import { TokenOptionKeys } from "./constants";
+import { SITE_ABRV, SITE_NAME, TokenOptionKeys } from "./constants";
 import {
 	replaceSpacesWithUnderscore,
 	stripEmoji,
@@ -28,33 +28,38 @@ export default function generateDirectoryName(
 			case TokenOptionKeys.BATTLE_START_DATE:
 				directoryName += ` ${
 					options.useUnixTimestamps
-						? Date.parse(battleDetails.start)
-						: battleDetails.start
+						? Date.parse(battleDetails.battleStartDate)
+						: battleDetails.battleStartDate
 				}`;
 				break;
 			case TokenOptionKeys.SITE_NAME:
-				directoryName += ` BotB`;
+				directoryName += battleDetails.siteName;
+				break;
+			case TokenOptionKeys.SITE_ABRV:
+				directoryName += battleDetails.siteAbreviation;
 				break;
 			case TokenOptionKeys.BATTLE_ID:
 				directoryName += ` ${preID}${battleDetails.battleID}`;
 				break;
 			case TokenOptionKeys.BATTLE_TYPE:
-				directoryName += battleDetails.type ? ` ${battleDetails.type}` : "";
+				directoryName += battleDetails.battleType
+					? ` ${battleDetails.battleType}`
+					: "";
 				break;
 			case TokenOptionKeys.BATTLE_SUBTYPE:
-				directoryName += battleDetails.subtype
-					? ` ${battleDetails.subtype}`
+				directoryName += battleDetails.battleSubtype
+					? ` ${battleDetails.battleSubtype}`
 					: "";
 				break;
 			case TokenOptionKeys.BATTLE_NAME:
-				directoryName += ` ${battleDetails.title}`;
+				directoryName += ` ${battleDetails.battleName}`;
 				break;
 			case TokenOptionKeys.BATTLE_FORMATS:
 				directoryName +=
 					options.hideMultipleFormats === true &&
-					battleDetails.formats.length > 1
+					battleDetails.battleFormats.length > 1
 						? ""
-						: ` (${battleDetails.formats.join(", ")})`;
+						: ` (${battleDetails.battleFormats.join(", ")})`;
 				break;
 			default:
 				console.warn(`Unknown token: ${directoryNameToken}`);

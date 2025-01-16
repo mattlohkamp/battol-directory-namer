@@ -17,9 +17,13 @@ export const APIBattleTypeLabels = [
 	"UNKNOWN_4",
 ];
 
+export const SITE_ABRV = "BotB";
+export const SITE_NAME = "Battle of the Bits";
+
 export const TokenOptionKeys = {
 	BLANK: "blank",
 	SITE_NAME: "siteName",
+	SITE_ABRV: "siteAbreviation",
 	BATTLE_NAME: "battleName",
 	BATTLE_ID: "battleID",
 	BATTLE_TYPE: "battleType",

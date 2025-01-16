@@ -15,6 +15,7 @@ import { setDirectoryNameTokens } from "../state/directoryNameTokensSlice.js";
 const tokenOptions = {
 	//	we'll do TokenOptionKeys.BLANK manually in the renderTokenListItem function so we can disable it and use it as a placeholder
 	[TokenOptionKeys.SITE_NAME]: "Site Name",
+	[TokenOptionKeys.SITE_ABRV]: "Site Abbreviation",
 	[TokenOptionKeys.BATTLE_NAME]: "Battle Name",
 	[TokenOptionKeys.BATTLE_ID]: "Battle ID",
 	[TokenOptionKeys.BATTLE_TYPE]: "Battle Type",

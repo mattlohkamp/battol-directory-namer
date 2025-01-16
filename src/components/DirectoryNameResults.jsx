@@ -1,9 +1,9 @@
 import { useSelector } from "react-redux";
 import { createSelector } from "reselect";
-import { selectBattleDetails } from "../state/battleDataSlice.js";
 import { selectOptions } from "../state/optionsSlice.js";
 import { selectDirectoryNameTokens } from "../state/directoryNameTokensSlice.js";
 import generateDirectoryName from "../generateDirectoryName.js";
+import selectBattleDetails from "../state/selectBattleDetails.js";
 
 const selectDirectoryName = createSelector(
 	selectBattleDetails,

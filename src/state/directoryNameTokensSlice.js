@@ -2,7 +2,7 @@ import { createSlice } from "@reduxjs/toolkit";
 import { TokenOptionKeys } from "../constants.js";
 
 const initialState = [
-	TokenOptionKeys.SITE_NAME,
+	TokenOptionKeys.SITE_ABRV,
 	TokenOptionKeys.BATTLE_ID,
 	TokenOptionKeys.BATTLE_SUBTYPE,
 	TokenOptionKeys.BATTLE_NAME,
