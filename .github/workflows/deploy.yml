@@ -6,42 +6,20 @@ on:
       - main
 
 permissions:
-  id-token: write
-  contents: read
   pages: write
+  id-token: write
 
 jobs:
-  build-and-deploy:
+  deploy:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout src
+      - name: Checkout
         uses: actions/checkout@v4
 
-      - name: NodeJS
-        uses: actions/setup-node@v3
-        with:
-          node-version: 20
+      - name: Create Dummy Build
+        run: |
+          mkdir dist
+          echo "Hello, GitHub Pages!" > dist/index.html
 
-      - name: Install Dependencies
-        run: npm install
-
-      - name: Build Project
-        run: mkdir dist && echo "Hello, world!" > dist/index.html
-
-      - name: Upload Build Artifact
-        uses: actions/upload-artifact@v4
-        with:
-          name: github-pages
-          path: ./dist
-
-  deploy:
-    needs: build-and-deploy
-    runs-on: ubuntu-latest
-    permissions:
-      id-token: write
-      pages: write
-      contents: read
-
-    steps:
       - name: Deploy to GitHub Pages
         uses: actions/deploy-pages@v4
