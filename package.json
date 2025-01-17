@@ -1,7 +1,7 @@
 {
 	"name": "battol-directory-namer",
-	"version": ".91",
-	"description": "a quick util for generating consistent naming schemes for botb battle directories",
+	"version": "1.0.1",
+	"description": "Customizeable filesystem-friendly directory name generator for BotB battles",
 	"type": "module",
 	"scripts": {
 		"start": "npm run dev",
@@ -12,7 +12,7 @@
 		"battleofthebits, botb, utility, directory, folder, naming"
 	],
 	"author": "Matt Lohkamp",
-	"license": "TBD",
+	"license": "CC0-1.0",
 	"dependencies": {
 		"@reduxjs/toolkit": "^2.5.0",
 		"@vitejs/plugin-react": "^4.3.4",

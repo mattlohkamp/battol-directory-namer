@@ -3,25 +3,29 @@
 	<head>
 		<meta charset="UTF-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+		<meta name="version" content="<%- npmPackage.version %>" />
+		<meta name="author" content="<%- npmPackage.author %>" />
 
-		<title><%- SITE_NAME %></title>
-		<meta name="title" content="<%- SITE_NAME %>" />
-		<meta name="description" content="<%- SITE_DESCRIPTION %>" />
+		<title><%- siteStrings.SITE_NAME %></title>
+		<meta name="title" content="<%- siteStrings.SITE_NAME %>" />
+		<meta name="description" content="<%- npmPackage.description %>" />
 
 		<link rel="manifest" href="/site.webmanifest" />
 
 		<!-- Open Graph / Facebook -->
 		<meta property="og:type" content="website" />
-		<meta property="og:url" content="<%- SITE_URL %>" />
-		<meta property="og:title" content="<%- SITE_NAME %>" />
-		<meta property="og:description" content="<%- SITE_DESCRIPTION %>" />
+		<meta property="og:url" content="<%- siteStrings.SITE_URL %>" />
+		<meta property="og:title" content="<%- siteStrings.SITE_NAME %>" />
+		<meta property="og:description" content="<%- npmPackage.description %>" />
 		<meta property="og:image" content="/social.jpg" />
 
 		<!-- Twitter -->
 		<meta property="twitter:card" content="summary_large_image" />
-		<meta property="twitter:url" content="<%- SITE_URL %>" />
-		<meta property="twitter:title" content="<%- SITE_NAME %>" />
-		<meta property="twitter:description" content="<%- SITE_DESCRIPTION %>" />
+		<meta property="twitter:url" content="<%- siteStrings.SITE_URL %>" />
+		<meta property="twitter:title" content="<%- siteStrings.SITE_NAME %>" />
+		<meta
+			property="twitter:description"
+			content="<%- npmPackage.description %>" />
 		<meta property="twitter:image" content="/social-image.jpg" />
 
 		<!-- Favicon -->
