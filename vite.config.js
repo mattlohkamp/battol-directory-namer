@@ -4,7 +4,7 @@ import { createHtmlPlugin } from "vite-plugin-html";
 import siteStrings from "./src/site.json";
 
 export default defineConfig({
-	base: "battol-directory-namer",
+	base: "/battol-directory-namer",
 	plugins: [
 		react(),
 		createHtmlPlugin({
