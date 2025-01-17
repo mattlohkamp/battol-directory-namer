@@ -26,5 +26,4 @@ jobs:
       - name: Deploy
         uses: actions/deploy-pages@v4
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          public_dir: ./dist
+          github_token: ${{ github.token }}
