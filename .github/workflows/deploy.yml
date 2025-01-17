@@ -6,20 +6,40 @@ on:
       - main
 
 permissions:
-  pages: write
   id-token: write
+  pages: write
+  contents: read
 
 jobs:
-  deploy:
+  build-and-deploy:
     runs-on: ubuntu-latest
     steps:
+      # Step 1: Checkout code
       - name: Checkout
         uses: actions/checkout@v4
 
+      # Step 2: Create a dummy build
       - name: Create Dummy Build
         run: |
           mkdir dist
           echo "Hello, GitHub Pages!" > dist/index.html
 
+      # Step 3: Upload artifact
+      - name: Upload Build Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: github-pages
+          path: ./dist
+
+  deploy:
+    needs: build-and-deploy
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      pages: write
+      contents: read
+
+    steps:
+      # Step 4: Deploy using the artifact
       - name: Deploy to GitHub Pages
         uses: actions/deploy-pages@v4
