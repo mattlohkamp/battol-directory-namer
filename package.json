@@ -6,7 +6,8 @@
 	"scripts": {
 		"start": "npm run dev",
 		"dev": "vite",
-		"build": "vite build"
+		"build": "vite build",
+		"deploy": "vite build && git checkout main && cp -r dist/* . && git add . && git commit -m 'Deploy update' && git push origin main && git checkout -"
 	},
 	"keywords": [
 		"battleofthebits, botb, utility, directory, folder, naming"
