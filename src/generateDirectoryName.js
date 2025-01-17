@@ -41,7 +41,7 @@ export default function generateDirectoryName(
 			case TokenOptionKeys.BATTLE_ID:
 				directoryName += ` ${preID}${battleDetails.battleID}`;
 				break;
-			case TokenOptionKeys.BATTLE_TYPE:
+			case TokenOptionKeys.BATTLE_TYPE: //	FIXME: needs to be run through the battle type map
 				directoryName += battleDetails.battleType
 					? ` ${battleDetails.battleType}`
 					: "";

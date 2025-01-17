@@ -5,5 +5,7 @@
 - [ ] **testing** unit testing, especially in util funcs
 - [ ] **testing** api mocks
 - [ ] **session state** save cookies or similar to preserve user options and string templating
-- [ ] **webhost** figure out hosting situation
-- [ ] **CI** set up github actions to build and host latest
+- [x] **webhost** figure out hosting situation
+- [x] **CI** ~~set up github actions to build and~~ host latest via github pages
+- [ ] **release** start keeping release notes
+- [ ] **CI** automate process of building, tagging release, and generating release notes to append entry to .md

@@ -56,6 +56,8 @@ export default function DirectoryNameTemplate() {
 		dispatch(setDirectoryNameTokens(_directoryNameTokens));
 	};
 
+	//	FIXME: unsatisfiable tokens (like subtype) that will return blank string should be marked / disabled?
+
 	const renderTokenListItem = (value, i) => (
 		<li key={i}>
 			<select value={value} onChange={onChangeTokenListItem(i)}>
