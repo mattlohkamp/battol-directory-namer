@@ -4,7 +4,11 @@ on:
   push:
     branches:
       - main
-
+      
+permissions:
+  id-token: write
+  contents: read
+  
 jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
@@ -23,8 +27,14 @@ jobs:
       - name: Build
         run: npm run build
 
+      - name: Upload Artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: github-pages
+          path: ./dist
+
       - name: Deploy
         uses: actions/deploy-pages@v4
         with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
+          github_token: ${{ github.token }}
           public_dir: ./dist
