@@ -14,28 +14,40 @@ jobs:
   build-and-deploy:
     runs-on: ubuntu-latest
     steps:
+      # Step 1: Checkout the repository
       - name: Checkout src
         uses: actions/checkout@v4
 
+      # Step 2: Set up Node.js
       - name: NodeJS
         uses: actions/setup-node@v3
         with:
           node-version: 20
 
+      # Step 3: Install dependencies
       - name: Dependencies
         run: npm install
 
+      # Step 4: Build the project
       - name: Build
         run: npm run build
 
+      # Step 5: Upload the build artifact
       - name: Upload Artifact
         uses: actions/upload-artifact@v4
         with:
           name: github-pages
           path: ./dist
 
+  deploy:
+    needs: build-and-deploy
+    runs-on: ubuntu-latest
+    permissions:
+      id-token: write
+      pages: write
+      contents: read
+
+    steps:
+      # Step 1: Deploy to GitHub Pages
       - name: Deploy
         uses: actions/deploy-pages@v4
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          public_dir: ./dist
