@@ -1,6 +1,6 @@
 {
 	"name": "battol-directory-namer",
-	"version": "1.0.1",
+	"version": "1.0.2",
 	"description": "Customizeable filesystem-friendly directory name generator for BotB battles",
 	"type": "module",
 	"scripts": {
