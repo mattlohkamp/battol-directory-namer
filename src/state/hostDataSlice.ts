@@ -5,11 +5,11 @@ import { APIBotbrLoad } from "../types/api";
 
 export const fetchHostData = createAsyncThunk(
 	"hostData/fetchHostData",
-	async (userID: number, {}) => {
+	async (userID: number, { dispatch }) => {
 		try {
 			const response = await fetch(APIUserURL(userID));
 			const data = (await response.json()) as HostDataState;
-			setHostData(data);
+			dispatch(setHostData(data));
 			return data;
 		} catch (err) {}
 	}
