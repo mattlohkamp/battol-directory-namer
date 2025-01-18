@@ -1,60 +1,63 @@
-import { SITE_ABRV, SITE_NAME, TokenOptionKeys } from "./constants";
+import { TOKEN_OPTION } from "./constants";
+import { DirectoryNameTokensState } from "./state/directoryNameTokensSlice";
+import { OptionsState } from "./state/optionsSlice";
+import { BattleDetails } from "./state/selectBattleDetails";
 import {
 	replaceSpacesWithUnderscore,
 	stripEmoji,
 	stripNonAlphaNumerics,
-} from "./utils.js";
+} from "./utils";
 
 //	TODO: unit test
 export default function generateDirectoryName(
-	battleDetails,
-	directoryNameTokens,
-	options
+	battleDetails: BattleDetails,
+	directoryNameTokens: DirectoryNameTokensState,
+	options: OptionsState
 ) {
 	let directoryName = "";
 	const preID = options.includePoundBeforeID ? "#" : "";
 
 	directoryNameTokens.forEach((directoryNameToken) => {
 		switch (directoryNameToken) {
-			case TokenOptionKeys.BLANK:
+			case TOKEN_OPTION.BLANK:
 				directoryName += ` `;
 				break;
-			case TokenOptionKeys.BATTLE_HOST_ID:
+			case TOKEN_OPTION.BATTLE_HOST_ID:
 				directoryName += ` ${preID}${battleDetails.hostID}`;
 				break;
-			case TokenOptionKeys.BATTLE_HOST_NAME:
+			case TOKEN_OPTION.BATTLE_HOST_NAME:
 				directoryName += ` ${battleDetails.hostName}`;
 				break;
-			case TokenOptionKeys.BATTLE_START_DATE:
+			case TOKEN_OPTION.BATTLE_START_DATE:
 				directoryName += ` ${
 					options.useUnixTimestamps
-						? Date.parse(battleDetails.battleStartDate)
+						? Date.parse(battleDetails.battleStartDate.toString())
 						: battleDetails.battleStartDate
 				}`;
 				break;
-			case TokenOptionKeys.SITE_NAME:
+			case TOKEN_OPTION.SITE_NAME:
 				directoryName += battleDetails.siteName;
 				break;
-			case TokenOptionKeys.SITE_ABRV:
+			case TOKEN_OPTION.SITE_ABRV:
 				directoryName += battleDetails.siteAbreviation;
 				break;
-			case TokenOptionKeys.BATTLE_ID:
+			case TOKEN_OPTION.BATTLE_ID:
 				directoryName += ` ${preID}${battleDetails.battleID}`;
 				break;
-			case TokenOptionKeys.BATTLE_TYPE: //	FIXME: needs to be run through the battle type map
+			case TOKEN_OPTION.BATTLE_TYPE: //	FIXME: needs to be run through the battle type map
 				directoryName += battleDetails.battleType
 					? ` ${battleDetails.battleType}`
 					: "";
 				break;
-			case TokenOptionKeys.BATTLE_SUBTYPE:
+			case TOKEN_OPTION.BATTLE_SUBTYPE:
 				directoryName += battleDetails.battleSubtype
 					? ` ${battleDetails.battleSubtype}`
 					: "";
 				break;
-			case TokenOptionKeys.BATTLE_NAME:
+			case TOKEN_OPTION.BATTLE_NAME:
 				directoryName += ` ${battleDetails.battleName}`;
 				break;
-			case TokenOptionKeys.BATTLE_FORMATS:
+			case TOKEN_OPTION.BATTLE_FORMATS:
 				directoryName +=
 					options.hideMultipleFormats === true &&
 					battleDetails.battleFormats.length > 1

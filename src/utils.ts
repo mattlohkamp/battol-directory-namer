@@ -1,4 +1,5 @@
 import ms from "ms";
+import { APIBattleCurrent } from "./types/api";
 
 /**
  * @constant {RegExp} battleIdFromBattleURL - takes a valid battle URL and extracts the battle ID
@@ -6,36 +7,46 @@ import ms from "ms";
 export const MatchBattleIdFromBattleURL = /\/Battle\/(\d+)/;
 
 export const matchEmoji = /\p{RGI_Emoji}/gv; //	TODO: double check this works cross browser / platform
-export function stripEmoji(string) {
+export function stripEmoji(string: string) {
 	return string.replaceAll(matchEmoji, "");
 }
 
-export function replaceSpacesWithUnderscore(string) {
+export function replaceSpacesWithUnderscore(string: string) {
 	return string.replaceAll(" ", "_");
 }
 
 export const matchNonAlphaNumerics = /[^0-9a-zA-Z_]/g;
 
-export function stripNonAlphaNumerics(string) {
+export function stripNonAlphaNumerics(string: string) {
 	return string.replaceAll(matchNonAlphaNumerics, "");
 }
 
 //	TODO:	guess at major type by time period - distinguish monthlies from quarterlies, and possibly other special cases like advent calendar, halloween, etc
 
-const getXHBSubtypeByDateDefaultOptions = {
+export type GetXHBSubtypeByDateDefaultOptions = {
+	useOfor1: boolean;
+	currentDate?: Date;
+};
+const getXHBSubtypeByDateDefaultOptions: GetXHBSubtypeByDateDefaultOptions = {
 	useOfor1: true,
-	currentDate: null,
 };
 //	TODO: unit test
-export const getXHBSubtypeByDate = (start, end, options) => {
+export const getXHBSubtypeByDate = (
+	start: APIBattleCurrent["start"],
+	end: APIBattleCurrent["end"],
+	options: GetXHBSubtypeByDateDefaultOptions = {
+		...getXHBSubtypeByDateDefaultOptions,
+	}
+) => {
 	options = {
 		...getXHBSubtypeByDateDefaultOptions,
 		...options,
 	};
-	if (options.currentDate === null) {
+	if (!options.currentDate) {
 		options.currentDate = new Date();
 	}
-	if (end < options.currentDate) {
+	if (parseInt(end) < options.currentDate.getTime()) {
+		//	FIXME:	what are these datatypes? how was this ever working??
 		return "XHB";
 		/*
 				So - for future battles, start is a precise value, but end is an estimate - and once the battle has been completed, end is set to the precise value.
@@ -55,9 +66,9 @@ export const getXHBSubtypeByDate = (start, end, options) => {
 	}
 	//	we only care about the time the battle is open to entries; by default, the battle length includes 24 hours of voting time.
 	//	so an OHB would have a duration of 25 hours: 1 hour of entries, 24 hours of voting.
-	const durationMs = end - start - Number(ms("1d"));
+	const durationMs = parseInt(end) - parseInt(start) - ms("1d");
 
-	if (durationMs === 1 * Number(ms("1h"))) {
+	if (durationMs === 1 * ms("1h")) {
 		return `${options.useOfor1 ? "O" : "1"}HB`;
 	} else {
 		return `${durationMs / Number(ms("1h"))}`;

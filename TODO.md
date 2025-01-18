@@ -1,6 +1,6 @@
 - [x] **consistent naming** replace 'folder' with 'directory' globally
 - [x] **checkpoint!** make it to feature parity with original vanilla js prototype
-- [ ] **typing** convert codebase to typescript, remove redundant JSDOC
+- [x] **typing** convert codebase to typescript, remove redundant JSDOC
 - [ ] **consistent typing** evaluate usage of null versus undefined throughout (undefined is incidentally nothing / 'missing', null is nothing on purpose?)
 - [ ] **testing** unit testing, especially in util funcs
 - [ ] **testing** api mocks

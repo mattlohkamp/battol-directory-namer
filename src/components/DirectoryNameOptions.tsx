@@ -1,41 +1,38 @@
 import { useDispatch, useSelector } from "react-redux";
-import { setOptions } from "../state/optionsSlice.js";
+import { OptionsState, setOptions } from "../state/optionsSlice";
+import store from "../state/store";
+import { ChangeEvent } from "react";
 
 export default function DirectoryNameOptions() {
-	const dispatch = useDispatch();
+	const dispatch: typeof store.dispatch = useDispatch();
 	const allowEmoji = useSelector(
-		/**
-		 * @param {{options:{allowEmoji:boolean}}} state
-		 */ (state) => state.options.allowEmoji
+		(state: ReturnType<typeof store.getState>) => state.options.allowEmoji
 	);
 	const convertSpacesToUnderscores = useSelector(
-		/**
-		 * @param {{options:{convertSpacesToUnderscores:boolean}}} state
-		 */ (state) => state.options.convertSpacesToUnderscores
+		(state: ReturnType<typeof store.getState>) =>
+			state.options.convertSpacesToUnderscores
 	);
 	const stripNonAlphanumerics = useSelector(
-		/**
-		 * @param {{options:{stripNonAlphanumerics:boolean}}} state
-		 */ (state) => state.options.stripNonAlphanumerics
+		(state: ReturnType<typeof store.getState>) =>
+			state.options.stripNonAlphanumerics
 	);
 	const hideMultipleFormats = useSelector(
-		/**
-		 * @param {{options:{hideMultipleFormats:boolean}}} state
-		 */ (state) => state.options.hideMultipleFormats
+		(state: ReturnType<typeof store.getState>) =>
+			state.options.hideMultipleFormats
 	);
 	const useUnixTimestamps = useSelector(
-		/**
-		 * @param {{options:{useUnixTimestamps:boolean}}} state
-		 */ (state) => state.options.useUnixTimestamps
+		(state: ReturnType<typeof store.getState>) =>
+			state.options.useUnixTimestamps
 	);
 	const includePoundBeforeID = useSelector(
-		/**
-		 * @param {{options:{includePoundBeforeID:boolean}}} state
-		 */ (state) => state.options.includePoundBeforeID
+		(state: ReturnType<typeof store.getState>) =>
+			state.options.includePoundBeforeID
 	);
-	const onChangeCheckbox = (key) => (e) => {
-		dispatch(setOptions({ [key]: e.target.checked }));
+	const onChangeCheckbox = (key: keyof OptionsState) => (e: ChangeEvent) => {
+		dispatch(setOptions({ [key]: (e.target as HTMLInputElement).checked }));
 	};
+
+	//	TODO: generate these procedurally based off valid OptionsState props keyed to labels
 
 	return (
 		<ul id="options">

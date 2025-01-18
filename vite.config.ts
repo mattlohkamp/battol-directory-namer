@@ -5,7 +5,7 @@ import siteStrings from "./src/site.json";
 import npmPackage from "./package.json";
 
 export default defineConfig({
-	base: "/battol-directory-namer",
+	base: npmPackage.name, //	match github repo name
 	plugins: [
 		react(),
 		createHtmlPlugin({
@@ -18,7 +18,10 @@ export default defineConfig({
 		}),
 	],
 	build: {
-		outDir: "docs",
+		outDir: "docs", //	required for simple GitHub Pages setup
 		emptyOutDir: true,
+	},
+	server: {
+		strictPort: true,
 	},
 });

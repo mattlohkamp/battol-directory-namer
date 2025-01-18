@@ -1,9 +1,5 @@
 import { useSelector } from "react-redux";
-import {
-	APIBattleTypeLabels,
-	getAvatarURL,
-	getUserProfileURL,
-} from "../constants.js";
+import { APIBattleTypeLabels, getAvatarURL } from "../constants.js";
 import selectBattleDetails from "../state/selectBattleDetails.js";
 
 export default function BattleDetails() {

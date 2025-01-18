@@ -1,19 +1,24 @@
 import { useDispatch, useSelector } from "react-redux"; // Example: if using Redux for global state
-import { selectBattleURL, setBattleURL } from "../state/battleURLSlice.js";
-import { fetchBattleData } from "../state/battleDataSlice.js";
-import { MatchBattleIdFromBattleURL } from "../utils.js";
-import { APIDomain } from "../constants.js";
+import { selectBattleURL, setBattleURL } from "../state/battleURLSlice";
+import { fetchBattleData } from "../state/battleDataSlice";
+import { MatchBattleIdFromBattleURL } from "../utils";
+import { APIDomain } from "../constants";
+import store from "../state/store";
 
 export default function BattleURLInput() {
-	const dispatch = useDispatch();
+	const dispatch: typeof store.dispatch = useDispatch();
 	const battleURL = useSelector(selectBattleURL);
 	return (
 		<form
 			onSubmitCapture={(e) => {
-				const battleId = (
-					battleURL.match(MatchBattleIdFromBattleURL) ?? []
-				).pop();
-				dispatch(fetchBattleData(battleId));
+				if (battleURL !== null) {
+					const battleId = (
+						battleURL.match(MatchBattleIdFromBattleURL) ?? []
+					).pop();
+					if (battleId !== undefined) {
+						dispatch(fetchBattleData(parseInt(battleId)));
+					}
+				}
 				e.preventDefault();
 			}}>
 			<label>

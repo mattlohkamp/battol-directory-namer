@@ -1,15 +1,14 @@
 {
 	"compilerOptions": {
 		"lib": [
-			"es2017",
+			"es2021",
 			"dom"
 		],
 		"checkJs": true,
 		"jsx": "react-jsx",
 		"resolveJsonModule": true,
 		"esModuleInterop": true,
-		"noImplicitAny": false,
-		"strict": false // Disable all strict TypeScript checks
+		//	"noImplicitAny": false,
 	},
 	"exclude": [
 		"node_modules",
