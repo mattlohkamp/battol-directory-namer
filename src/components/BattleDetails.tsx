@@ -68,7 +68,5 @@ export default function BattleDetails() {
 				</div>
 			</dl>
 		</>
-	) : (
-		<p>loading...</p>
-	); //	TODO: loading / error / empty state
+	) : null;
 }

@@ -57,10 +57,9 @@ export default function CurrentBattlesContainer() {
 
 	return (
 		<div id="current-battles-container">
-			<h2>Current &amp; Upcomming Battles:</h2>
-			<button type="button" id="refresh-battles" onClick={fetchItems}>
-				Refresh 🔃
-			</button>
+			<header>
+				<h2>Now &amp; Next Batols:</h2>
+			</header>
 			<ol id="current-battles-list">
 				{battleOptions.map((battleOption) => (
 					<li key={battleOption.id}>
@@ -78,6 +77,9 @@ export default function CurrentBattlesContainer() {
 					</li>
 				))}
 			</ol>
+			<button type="button" id="refresh-battles" onClick={fetchItems}>
+				🔃 Get Fresh Batols
+			</button>
 		</div>
 	);
 }

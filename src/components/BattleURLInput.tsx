@@ -21,6 +21,16 @@ export default function BattleURLInput() {
 				}
 				e.preventDefault();
 			}}>
+			<style>{`
+	dt:has(+dd:empty) {
+		opacity: .5;
+		&+dd::after {
+			opacity: .5;
+			content:'n/a';
+		}
+
+	}
+`}</style>
 			<label>
 				<span>Posit Battol URL: </span>
 				<input
@@ -34,13 +44,9 @@ export default function BattleURLInput() {
 					}}
 				/>
 			</label>
-			{battleURL ? (
-				<button type="submit">Supplicate Server</button>
-			) : (
-				<button type="submit" disabled>
-					Supplicate Server
-				</button>
-			)}
+			<button type="submit" disabled={battleURL === null}>
+				Supplicate Server
+			</button>
 		</form>
 	);
 }
