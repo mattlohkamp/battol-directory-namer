@@ -1,8 +1,9 @@
 import { createSelector } from "reselect";
 import { BATTLE_TYPE, SITE_ABRV, SITE_NAME } from "../constants";
-import { getXHBSubtypeByDate } from "../utils";
 import { selectBattleData } from "./battleDataSlice";
 import { selectUserData } from "./hostDataSlice";
+import getXHBSubtypeByDate from "../getXHBSubtypeByDate";
+import { SQLDatetimeStringToDate } from "../utils";
 
 export type BattleDetails = {
 	siteName: string;
@@ -42,8 +43,8 @@ export const selectBattleDetails = createSelector(
 			battleName: battleData.title,
 			battleID: parseInt(battleData.id),
 			battleURL: battleData.url,
-			battleStartDate: new Date(battleData.start),
-			battleEndDate: new Date(battleData.end),
+			battleStartDate: SQLDatetimeStringToDate(battleData.start),
+			battleEndDate: SQLDatetimeStringToDate(battleData.end),
 			battleSubtype:
 				battleData.type === BATTLE_TYPE.XHB
 					? getXHBSubtypeByDate(battleData.start, battleData.end)

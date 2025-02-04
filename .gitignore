@@ -1,2 +1,3 @@
 node_modules
 # dist # now building manually
+src/codium_*
