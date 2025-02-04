@@ -3,6 +3,8 @@ import ReactDOM from "react-dom/client"; // Ensure you import from 'react-dom/cl
 import App from "./App";
 import store from "./state/store";
 import { Provider } from "react-redux";
+import "simpledotcss";
+import "./custom.simple.css";
 
 //	TODO: strict mode intentionally invokes useEffect twice remember
 const rootElement = document.getElementById("root");

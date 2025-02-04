@@ -1,0 +1,8 @@
+:root {
+	--accent-hover: #1abc9c;
+	--accent: #16a085;
+}
+
+button {
+	font-weight: bold;
+}

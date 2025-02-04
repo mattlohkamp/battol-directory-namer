@@ -2,6 +2,12 @@
 - [x] **checkpoint!** make it to feature parity with original vanilla js prototype
 - [x] **typing** convert codebase to typescript, remove redundant JSDOC
 - [ ] **consistent typing** evaluate usage of null versus undefined throughout (undefined is incidentally nothing / 'missing', null is nothing on purpose?)
+- [ ] **presentation** start with basic classless system, then implement minimal ui component library, then built solution like tailwind
+  - [x] [Simple.css](https://simplecss.org/)
+  - [Tacit](https://yegor256.github.io/tacit/)
+  - [System.css](https://sakofchit.github.io/system.css/)
+  - [Shoelace](https://shoelace.style/components)
+  - [TailwindCSS v4 + Vite](https://tailwindcss.com/blog/tailwindcss-v4)
 - [ ] **testing** unit testing, especially in util funcs
 - [ ] **testing** api mocks
 - [ ] **session state** save cookies or similar to preserve user options and string templating
