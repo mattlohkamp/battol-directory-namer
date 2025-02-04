@@ -1,6 +1,3 @@
-import ms from "ms";
-import { APIBattleCurrent } from "./types/api";
-
 /**
  * @constant {RegExp} battleIdFromBattleURL - takes a valid battle URL and extracts the battle ID
  */
@@ -28,4 +25,35 @@ export const matchNonAlphaNumerics = /[^0-9a-zA-Z_]/g;
 
 export function stripNonAlphaNumerics(string: string) {
 	return string.replaceAll(matchNonAlphaNumerics, "");
+}
+
+export const matchSQLDatetimeStringString =
+	/^\d{4}-\d{2}-\d{2} \d{2}:\d{2}:\d{2}$/; //	e.g. "YYYY-MM-DD HH:MM:SS"
+
+export function isValidSQLDatetimeString(dateString: string) {
+	return matchSQLDatetimeStringString.test(dateString);
+}
+
+export function SQLDatetimeStringToDate(sqlDateTime: string) {
+	if (!isValidSQLDatetimeString(sqlDateTime)) {
+		throw new Error(`Invalid date string: ${sqlDateTime}`);
+	}
+	const [datePart, timePart] = sqlDateTime.split(" ");
+	const [year, month, day] = datePart.split("-").map(Number);
+	const [hours, minutes, seconds] = timePart.split(":").map(Number);
+	return new Date(year, month - 1, day, hours, minutes, seconds);
+}
+
+export function dateToSQLDatetimeString(date: Date) {
+	if (isNaN(date.getTime())) {
+		throw new Error(`Invalid date: ${date}`);
+	}
+	const yyyy = date.getFullYear();
+	const mm = String(date.getMonth() + 1).padStart(2, "0"); // Month is 0-based
+	const dd = String(date.getDate()).padStart(2, "0");
+	const hh = String(date.getHours()).padStart(2, "0");
+	const min = String(date.getMinutes()).padStart(2, "0");
+	const ss = String(date.getSeconds()).padStart(2, "0");
+
+	return `${yyyy}-${mm}-${dd} ${hh}:${min}:${ss}`;
 }

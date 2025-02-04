@@ -2,7 +2,8 @@
 
 import ms from "ms";
 import { APIBattleCurrent } from "./types/api";
-import { XHB_LABELS } from "./constants";
+import { DEFAULT_VOTING_DURATION_MS, XHB_LABELS } from "./constants";
+import { isValidSQLDatetimeString, SQLDatetimeStringToDate } from "./utils";
 
 export type GetXHBSubtypeByDateDefaultOptions = {
 	useOfor1: boolean;
@@ -19,7 +20,19 @@ export const getXHBSubtypeByDate = (
 		currentDate: new Date(),
 	}
 ) => {
-	//	init
+	// Validate start and end as ISO strings
+	if (!isValidSQLDatetimeString(start)) {
+		throw new Error(
+			`Invalid start value "${start}" - must be a SQL datetime string (e.g. "YYYY-MM-DD HH:MM:SS")`
+		);
+	}
+	if (!isValidSQLDatetimeString(end)) {
+		throw new Error(
+			`Invalid end value "${end}" - must be a SQL datetime string (e.g. "YYYY-MM-DD HH:MM:SS")`
+		);
+	}
+
+	// init
 	options = {
 		...getXHBSubtypeByDateDefaultOptions,
 		...options,
@@ -27,18 +40,19 @@ export const getXHBSubtypeByDate = (
 	if (!options.currentDate) {
 		options.currentDate = new Date();
 	}
-	const startDate = new Date(start);
-	const endDate = new Date(end);
+	const startDate = SQLDatetimeStringToDate(start);
+	const endDate = SQLDatetimeStringToDate(end);
 
-	//	if this battle already ended in the past - see † EXPLANATION † below
+	// if this battle already ended in the past - see † EXPLANATION † below
 	if (endDate < options.currentDate) {
 		return XHB_LABELS.X;
 	}
 
-	//	we only care about the time the battle is open to entries; by default, the battle length includes 24 hours of voting time.
-	//	so an upcomming or current OHB would by default have a duration of 25 hours: 1 hour of entries, 24 hours of voting.
-	//	similarly, a 2HB would have a duration of 26 hours, etc.
-	const durationMs = endDate.getTime() - startDate.getTime() - ms("1d");
+	// we only care about the time the battle is open to entries; by default, the battle length includes 24 hours of voting time.
+	// so an upcomming or current OHB would by default have a duration of 25 hours: 1 hour of entries, 24 hours of voting.
+	// similarly, a 2HB would have a duration of 26 hours, etc.
+	const durationMs =
+		endDate.getTime() - startDate.getTime() - DEFAULT_VOTING_DURATION_MS;
 	switch (durationMs) {
 		case ms("1h"):
 			return options.useOfor1 ? XHB_LABELS.O : XHB_LABELS[1];

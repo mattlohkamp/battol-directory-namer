@@ -1,6 +1,7 @@
-//	TODO: test + verify values - MAJOR + XHB appear to be the only two currently in use
+import ms from "ms";
 
 export enum BATTLE_TYPE {
+	//	TODO: test + verify values - MAJOR + XHB appear to be the only two currently in use
 	MAJOR = 0,
 	CAMPAIGN = 1,
 	UNKNOWN_2 = 2,
@@ -26,6 +27,7 @@ export const APIBattleTypeLabels = {
 
 export const SITE_ABRV = "BotB";
 export const SITE_NAME = "Battle of the Bits";
+export const DEFAULT_VOTING_DURATION_MS = ms("24h");
 
 export enum TOKEN_OPTION {
 	BLANK,

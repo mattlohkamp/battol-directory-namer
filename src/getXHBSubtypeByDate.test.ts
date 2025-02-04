@@ -1,12 +1,7 @@
 import { describe, expect, it } from "vitest";
 import getXHBSubtypeByDate from "./getXHBSubtypeByDate";
-import { APIBattleTypeLabels, BATTLE_TYPE, XHB_LABELS } from "./constants";
-
-const getTomorrowISO = () => {
-	const tomorrow = new Date();
-	tomorrow.setDate(tomorrow.getDate() + 1);
-	return tomorrow.toISOString();
-};
+import { XHB_LABELS } from "./constants";
+import { dateToSQLDatetimeString } from "./utils";
 
 describe("getXHBSubtypeByDate", () => {
 	//	returns 'XHB' for battles that happened in the past
@@ -25,8 +20,8 @@ describe("getXHBSubtypeByDate", () => {
 		const tomorrowPlus25Hours = new Date(tomorrow);
 		tomorrowPlus25Hours.setHours(tomorrow.getHours() + 25);
 
-		const start = tomorrow.toISOString();
-		const end = tomorrowPlus25Hours.toISOString();
+		const start = dateToSQLDatetimeString(tomorrow);
+		const end = dateToSQLDatetimeString(tomorrowPlus25Hours);
 
 		const resultO = getXHBSubtypeByDate(start, end, { useOfor1: true });
 		expect(resultO).toBe(XHB_LABELS.O);
@@ -42,8 +37,8 @@ describe("getXHBSubtypeByDate", () => {
 		const tomorrowPlus26Hours = new Date(tomorrow);
 		tomorrowPlus26Hours.setHours(tomorrow.getHours() + 26);
 
-		const start = tomorrow.toISOString();
-		const end = tomorrowPlus26Hours.toISOString();
+		const start = dateToSQLDatetimeString(tomorrow);
+		const end = dateToSQLDatetimeString(tomorrowPlus26Hours);
 
 		const result = getXHBSubtypeByDate(start, end);
 		expect(result).toBe(XHB_LABELS[2]);
@@ -57,8 +52,8 @@ describe("getXHBSubtypeByDate", () => {
 		const tomorrowPlus28Hours = new Date(tomorrow);
 		tomorrowPlus28Hours.setHours(tomorrow.getHours() + 28);
 
-		const start = tomorrow.toISOString();
-		const end = tomorrowPlus28Hours.toISOString();
+		const start = dateToSQLDatetimeString(tomorrow);
+		const end = dateToSQLDatetimeString(tomorrowPlus28Hours);
 
 		const result = getXHBSubtypeByDate(start, end);
 		expect(result).toBe(XHB_LABELS[4]);
