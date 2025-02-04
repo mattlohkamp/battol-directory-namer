@@ -4,6 +4,8 @@ import ms from "ms";
 import { getXHBSubtypeByDate } from "./utils";
 import { describe, expect, it } from "vitest";
 
+//	TODO: confirm github actions autorunning pr reviews
+
 describe("getXHBSubtypeByDate", () => {
 	// Returns 'OHB' or '1HB' for battles with 1 hour duration based on useOfor1 option
 	it("should return OHB when useOfor1 is true and duration is 1 hour", () => {
