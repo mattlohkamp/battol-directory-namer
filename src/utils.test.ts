@@ -9,22 +9,24 @@ import { describe, expect, it } from "vitest";
 describe("getXHBSubtypeByDate", () => {
 	// Returns 'OHB' or '1HB' for battles with 1 hour duration based on useOfor1 option
 	it("should return OHB when useOfor1 is true and duration is 1 hour", () => {
-		const start = Date.now().toString();
-		const end = (Date.now() + ms("25h")).toString();
+		const start = Date.now().toString(); // current date
+		const end = (Date.now() + ms("25h")).toString(); // 25 hours from now
 
 		const result = getXHBSubtypeByDate(start, end, { useOfor1: true });
 
-		expect(result).toBe("OHB");
+		expect(result).toBe("OHB"); // 1 hour duration
 	});
 
 	// Handles invalid/missing start and end date formats
 	it("should return XHB when end date is before current date", () => {
 		const start = (Date.now() - ms("2d")).toString();
+
 		const end = (Date.now() - ms("1d")).toString();
 		const currentDate = new Date();
 
 		const result = getXHBSubtypeByDate(start, end, {
 			useOfor1: true,
+			extrenousProperty: "test",
 			currentDate,
 		});
 
