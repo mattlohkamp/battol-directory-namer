@@ -25,6 +25,7 @@ describe("getXHBSubtypeByDate", () => {
 
 		const result = getXHBSubtypeByDate(start, end, {
 			useOfor1: true,
+			fakeProp: "test",
 			currentDate,
 		});
 
