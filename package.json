@@ -6,7 +6,9 @@
 	"scripts": {
 		"start": "npm run dev",
 		"dev": "vite",
-		"build": "vite build"
+		"build": "vite build",
+		"test": "vitest",
+		"test:watch": "vitest --watch"
 	},
 	"keywords": [
 		"battleofthebits, botb, utility, directory, folder, naming"
@@ -28,9 +30,14 @@
 		"vite": "^6.0.3"
 	},
 	"devDependencies": {
+		"@testing-library/jest-dom": "^6.6.3",
+		"@testing-library/react": "^16.2.0",
+		"@testing-library/user-event": "^14.6.1",
 		"@types/ms": "^0.7.34",
 		"@types/react": "^19.0.7",
 		"@types/react-dom": "^19.0.3",
-		"vite-plugin-html": "^3.2.2"
+		"jsdom": "^26.0.0",
+		"vite-plugin-html": "^3.2.2",
+		"vitest": "^3.0.5"
 	}
 }

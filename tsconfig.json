@@ -16,7 +16,8 @@
     "strictFunctionTypes": true,
     "strictPropertyInitialization": true,
     "types": [
-      "vite/client"
+      "vite/client",
+      "vitest"
     ],
     "lib": [
       "es2021",
