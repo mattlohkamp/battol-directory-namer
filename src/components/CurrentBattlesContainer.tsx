@@ -7,9 +7,9 @@ import {
 import { selectBattleID, setBattleURL } from "../state/battleURLSlice";
 import { useDispatch } from "react-redux";
 import { fetchBattleData } from "../state/battleDataSlice";
-import { getXHBSubtypeByDate } from "../utils";
 import store from "./../state/store";
 import { APIBattleCurrent } from "../types/api";
+import getXHBSubtypeByDate from "../getXHBSubtypeByDate";
 
 type BattleOption = {
 	id: number;

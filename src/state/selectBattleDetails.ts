@@ -1,8 +1,8 @@
 import { createSelector } from "reselect";
 import { BATTLE_TYPE, SITE_ABRV, SITE_NAME } from "../constants";
-import { getXHBSubtypeByDate } from "../utils";
 import { selectBattleData } from "./battleDataSlice";
 import { selectUserData } from "./hostDataSlice";
+import getXHBSubtypeByDate from "../getXHBSubtypeByDate";
 
 export type BattleDetails = {
 	siteName: string;
