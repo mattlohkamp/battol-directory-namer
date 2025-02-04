@@ -5,7 +5,7 @@ import siteStrings from "./src/site.json";
 import npmPackage from "./package.json";
 
 export default defineConfig({
-	base: npmPackage.name, //	match github repo name
+	base: `/${npmPackage.name}`, //	match github repo name, starts with a slash
 	plugins: [
 		react(),
 		createHtmlPlugin({
