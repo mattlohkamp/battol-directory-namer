@@ -41,8 +41,9 @@ export default function DirectoryNameTemplate() {
 
 	const onChangeTokenListItem = (index: number) => (e: ChangeEvent) => {
 		const _directoryNameTokens = [...directoryNameTokens];
-		_directoryNameTokens[index] = (e.target as HTMLSelectElement)
-			.value as unknown as TOKEN_OPTION;
+		_directoryNameTokens[index] = parseInt(
+			(e.target as HTMLSelectElement).value
+		);
 		dispatch(setDirectoryNameTokens(_directoryNameTokens));
 	};
 

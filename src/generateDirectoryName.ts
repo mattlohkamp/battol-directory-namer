@@ -8,7 +8,7 @@ import {
 	stripNonAlphaNumerics,
 } from "./utils";
 
-//	TODO: unit test
+//	TODO: unit test ASAP
 export default function generateDirectoryName(
 	battleDetails: BattleDetails,
 	directoryNameTokens: DirectoryNameTokensState,
