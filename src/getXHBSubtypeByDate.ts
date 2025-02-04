@@ -43,6 +43,15 @@ export const getXHBSubtypeByDate = (
 	const startDate = SQLDatetimeStringToDate(start);
 	const endDate = SQLDatetimeStringToDate(end);
 
+	// throw an error if the start and end are not in order
+	if (startDate > endDate) {
+		throw new Error(`Start date "${start}" cannot be after end date "${end}"`);
+	} else if (startDate === endDate) {
+		throw new Error(
+			`Start "${start}" and end "${end}" dates cannot be the same`
+		);
+	}
+
 	// if this battle already ended in the past - see † EXPLANATION † below
 	if (endDate < options.currentDate) {
 		return XHB_LABELS.X;

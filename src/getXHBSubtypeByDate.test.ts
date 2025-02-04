@@ -4,14 +4,12 @@ import { XHB_LABELS } from "./constants";
 import { dateToSQLDatetimeString } from "./utils";
 
 describe("getXHBSubtypeByDate", () => {
-	//	returns 'XHB' for battles that happened in the past
 	it("should return XHB for battles that happened in the past", () => {
 		const start = "2001-01-01 00:00:00";
 		const end = "2001-01-02 01:00:00";
 		const result = getXHBSubtypeByDate(start, end);
 		expect(result).toBe(XHB_LABELS.X);
 	});
-	//	returns 'OHB' or '1HB' for future battles with 1 hour duration
 	it("should return OHB or 1HB for future battles with 1 hour duration", () => {
 		// start date should be in the future
 		const today = new Date();
@@ -28,7 +26,6 @@ describe("getXHBSubtypeByDate", () => {
 		const result1 = getXHBSubtypeByDate(start, end, { useOfor1: false });
 		expect(result1).toBe(XHB_LABELS[1]);
 	});
-	//	returns '2HB' for future battles with 2 hour duration
 	it("should return 2HB for future battles with 2 hour duration", () => {
 		// start date should be in the future
 		const today = new Date();
@@ -43,7 +40,6 @@ describe("getXHBSubtypeByDate", () => {
 		const result = getXHBSubtypeByDate(start, end);
 		expect(result).toBe(XHB_LABELS[2]);
 	});
-	//	returns '4HB' for future battles with 4 hour duration
 	it("should return 4HB for future battles with 4 hour duration", () => {
 		// start date should be in the future
 		const today = new Date();
@@ -57,5 +53,10 @@ describe("getXHBSubtypeByDate", () => {
 
 		const result = getXHBSubtypeByDate(start, end);
 		expect(result).toBe(XHB_LABELS[4]);
+	});
+	it("should throw an error if end date is before start", () => {
+		const start = "2468-02-04 06:08:10";
+		const end = "1234-05-06 07:08:09";
+		expect(() => getXHBSubtypeByDate(start, end)).toThrow();
 	});
 });
