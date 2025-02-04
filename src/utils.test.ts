@@ -9,27 +9,24 @@ import { describe, expect, it } from "vitest";
 describe("getXHBSubtypeByDate", () => {
 	// Returns 'OHB' or '1HB' for battles with 1 hour duration based on useOfor1 option
 	it("should return OHB when useOfor1 is true and duration is 1 hour", () => {
-		const start = Date.now().toString(); // current date
-		const end = (Date.now() + ms("25h")).toString(); // 25 hours from now
-
-		const result = getXHBSubtypeByDate(start, end, { useOfor1: true });
-
-		expect(result).toBe("OHB"); // 1 hour duration
+		const start = "0000-00-00 00:00:00";
+		const end = "0000-00-00 01:00:00";
+		const resultO = getXHBSubtypeByDate(start, end, { useOfor1: true });
+		expect(resultO).toBe("OHB");
+		const result1 = getXHBSubtypeByDate(start, end, { useOfor1: false });
+		expect(result1).toBe("1HB");
 	});
+	// Returns 'OHB' or '1HB' for battles with 1 hour duration based on useOfor1 option
+	it("should return 2HB anb 4HB for two and four hour XHBs respectively", () => {
+		const start2 = "0000-00-00 00:00:00";
+		const end2 = "0000-00-00 02:00:00";
+		const result2 = getXHBSubtypeByDate(start2, end2);
+		expect(result2).toBe("2HB");
 
-	// Handles invalid/missing start and end date formats
-	it("should return XHB when end date is before current date", () => {
-		const start = (Date.now() - ms("2d")).toString();
-
-		const end = (Date.now() - ms("1d")).toString();
-		const currentDate = new Date();
-
-		const result = getXHBSubtypeByDate(start, end, {
-			useOfor1: true,
-			extrenousProperty: "test",
-			currentDate,
-		});
-
-		expect(result).toBe("XHB");
+		const start4 = "0000-00-00 00:00:00";
+		const end4 = "0000-00-00 04:00:00";
+		const result4 = getXHBSubtypeByDate(start4, end4);
+		expect(result4).toBe("4HB");
 	});
+	//	TODO: address case where duration is somehow unable to be determined, and return 'XHB' in that case
 });

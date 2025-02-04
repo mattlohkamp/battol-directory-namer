@@ -30,7 +30,7 @@ export type GetXHBSubtypeByDateDefaultOptions = {
 const getXHBSubtypeByDateDefaultOptions: GetXHBSubtypeByDateDefaultOptions = {
 	useOfor1: true,
 };
-//	TODO: unit test
+//	TODO: address case where duration is somehow unable to be determined, and return 'XHB' in that case
 export const getXHBSubtypeByDate = (
 	start: APIBattleCurrent["start"],
 	end: APIBattleCurrent["end"],
@@ -71,6 +71,6 @@ export const getXHBSubtypeByDate = (
 	if (durationMs === 1 * ms("1h")) {
 		return `${options.useOfor1 ? "O" : "1"}HB`;
 	} else {
-		return `${durationMs / Number(ms("1h"))}`;
+		return `${durationMs / Number(ms("1h"))}`; //	FIXME: how does this make any sense?
 	}
 };
