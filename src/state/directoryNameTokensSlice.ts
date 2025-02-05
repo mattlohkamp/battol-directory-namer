@@ -3,7 +3,7 @@ import { TOKEN_OPTION } from "../constants";
 import store from "./store";
 
 export type DirectoryNameTokensState = TOKEN_OPTION[];
-const initialState: DirectoryNameTokensState = [
+export const initialState: DirectoryNameTokensState = [
 	TOKEN_OPTION.SITE_ABRV,
 	TOKEN_OPTION.BATTLE_ID,
 	TOKEN_OPTION.BATTLE_SUBTYPE,

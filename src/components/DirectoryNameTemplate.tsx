@@ -2,17 +2,12 @@
 
 import { TOKEN_OPTION } from "../constants";
 import { useDispatch, useSelector } from "react-redux";
-import { setDirectoryNameTokens } from "../state/directoryNameTokensSlice";
+import {
+	initialState as directoryNameTokensState,
+	setDirectoryNameTokens,
+} from "../state/directoryNameTokensSlice";
 import store from "../state/store";
 import { ChangeEvent } from "react";
-
-/*
-	each line item is a select dropdown of tokens
-	each line item can be deleted or reselected
-	there's an 'add token' button that adds a new line item
-	each change to a line item updates the directory name preview
-	there's a 'reset' button that resets the directory name preview to the default
-*/
 
 const tokenOptionLabels = {
 	//	we'll do TokenOptionKeys.BLANK manually in the renderTokenListItem function so we can disable it and use it as a placeholder
@@ -38,6 +33,9 @@ export default function DirectoryNameTemplate() {
 		dispatch(
 			setDirectoryNameTokens([...directoryNameTokens, TOKEN_OPTION.BLANK])
 		);
+
+	const onClickResetButton = () =>
+		dispatch(setDirectoryNameTokens([...directoryNameTokensState]));
 
 	const onChangeTokenListItem = (index: number) => (e: ChangeEvent) => {
 		const _directoryNameTokens = [...directoryNameTokens];
@@ -82,7 +80,11 @@ export default function DirectoryNameTemplate() {
 		<form>
 			<ol>{directoryNameTokens.map(mapTokenToRenderListItem)}</ol>
 			<button type="button" name="add" onClick={onClickAddButton}>
-				Add Token
+				➕ Add Token
+			</button>
+			<br />
+			<button type="button" name="add" onClick={onClickResetButton}>
+				↩ Reset
 			</button>
 		</form>
 	);
