@@ -4,6 +4,8 @@ import battleDataSliceReducer from "./battleDataSlice";
 import optionsSliceReducer from "./optionsSlice";
 import directoryNameTokensSliceReducer from "./directoryNameTokensSlice";
 import hostDataSliceReducer from "./hostDataSlice";
+import { name as appNameSlug } from "../../package.json";
+import { load, save } from "redux-localstorage-simple";
 
 const store = configureStore({
 	reducer: {

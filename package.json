@@ -24,6 +24,7 @@
 		"react": "^19.0.0",
 		"react-dom": "^19.0.0",
 		"react-redux": "^9.2.0",
+		"redux-localstorage-simple": "^2.5.1",
 		"reselect": "^5.1.1",
 		"simpledotcss": "^2.3.3",
 		"typescript": "^5.7.3",
@@ -36,6 +37,7 @@
 		"@types/ms": "^0.7.34",
 		"@types/react": "^19.0.7",
 		"@types/react-dom": "^19.0.3",
+		"@types/redux-persist": "^4.3.1",
 		"jsdom": "^26.0.0",
 		"vite-plugin-html": "^3.2.2",
 		"vitest": "^3.0.5"
