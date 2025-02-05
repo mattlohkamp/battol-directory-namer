@@ -6,7 +6,9 @@
   - [x] [Simple.css](https://simplecss.org/)
   - [Tacit](https://yegor256.github.io/tacit/)
   - [System.css](https://sakofchit.github.io/system.css/)
+  - [The Monospace Web](https://owickstrom.github.io/the-monospace-web/)
   - [Shoelace](https://shoelace.style/components)
+  - [SRCL](https://www.sacred.computer/)
   - [TailwindCSS v4 + Vite](https://tailwindcss.com/blog/tailwindcss-v4)
 - [ ] **testing** unit testing, especially in util funcs
 - [ ] **testing** api mocks
