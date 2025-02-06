@@ -2,6 +2,7 @@
 - [x] **checkpoint!** make it to feature parity with original vanilla js prototype
 - [x] **typing** convert codebase to typescript, remove redundant JSDOC
 - [ ] **consistent typing** evaluate usage of null versus undefined throughout (undefined is incidentally nothing / 'missing', null is nothing on purpose?)
+- [ ] **cleanup** remove debugging console calls
 - [ ] **presentation** start with basic classless system, then implement minimal ui component library, then built solution like tailwind
   - [x] [Simple.css](https://simplecss.org/)
   - [Tacit](https://yegor256.github.io/tacit/)
