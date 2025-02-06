@@ -219,7 +219,6 @@ describe("SQLDatetimeStringToDate", () => {
 	it("should convert valid SQL datetime string to Date object", () => {
 		const sqlDateTime = "2025-02-03 14:30:00";
 		const result = SQLDatetimeStringToDate(sqlDateTime);
-		console.log(result);
 		expect(result.getFullYear()).toBe(2025);
 		expect(result.getMonth()).toBe(1); // 0-based month index
 		expect(result.getDate()).toBe(3);

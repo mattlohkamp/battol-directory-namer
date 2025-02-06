@@ -76,8 +76,6 @@ export default function DirectoryNameTemplate() {
 		</li>
 	);
 
-	console.log(directoryNameTokens);
-
 	return (
 		<form>
 			<ol>{directoryNameTokens.map(mapTokenToRenderListItem)}</ol>

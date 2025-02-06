@@ -11,7 +11,6 @@ const battleDataSlice = createSlice({
 	initialState,
 	reducers: {
 		setBattleData(_, action: PayloadAction<BattleDataState>) {
-			console.log("setBattleData", action);
 			return action.payload;
 		},
 	},
@@ -26,7 +25,6 @@ export const fetchBattleData = createAsyncThunk(
 		try {
 			const response = await fetch(APIBattleURL(battleId));
 			const data = (await response.json()) as BattleDataState;
-			console.log("fetchBattleData", data);
 			dispatch(setBattleData(data));
 			if (data !== null) {
 				dispatch(fetchHostData(parseInt(data.botbr_id)));
