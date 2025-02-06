@@ -1,4 +1,4 @@
-import { TOKEN_OPTION } from "./constants";
+import { APIBattleTypeLabels, TOKEN_OPTION } from "./constants";
 import { DirectoryNameTokensState } from "./state/directoryNameTokensSlice";
 import { OptionsState } from "./state/optionsSlice";
 import { BattleDetails } from "./state/selectBattleDetails";
@@ -14,14 +14,11 @@ export default function generateDirectoryName(
 	directoryNameTokens: DirectoryNameTokensState,
 	options: OptionsState
 ) {
-	let directoryName = "";
+	let directoryName = ""; //	trim will remove extra whitespace after this foreach
 	const preID = options.includePoundBeforeID ? "#" : "";
 
 	directoryNameTokens.forEach((directoryNameToken) => {
 		switch (directoryNameToken) {
-			case TOKEN_OPTION.BLANK:
-				directoryName += ` `;
-				break;
 			case TOKEN_OPTION.BATTLE_HOST_ID:
 				directoryName += ` ${preID}${battleDetails.hostID}`;
 				break;
@@ -36,17 +33,17 @@ export default function generateDirectoryName(
 				}`;
 				break;
 			case TOKEN_OPTION.SITE_NAME:
-				directoryName += battleDetails.siteName;
+				directoryName += ` ${battleDetails.siteName}`;
 				break;
 			case TOKEN_OPTION.SITE_ABRV:
-				directoryName += battleDetails.siteAbreviation;
+				directoryName += ` ${battleDetails.siteAbreviation}`;
 				break;
 			case TOKEN_OPTION.BATTLE_ID:
 				directoryName += ` ${preID}${battleDetails.battleID}`;
 				break;
-			case TOKEN_OPTION.BATTLE_TYPE: //	FIXME: needs to be run through the battle type map
+			case TOKEN_OPTION.BATTLE_TYPE:
 				directoryName += battleDetails.battleType
-					? ` ${battleDetails.battleType}`
+					? ` ${APIBattleTypeLabels[battleDetails.battleType]}`
 					: "";
 				break;
 			case TOKEN_OPTION.BATTLE_SUBTYPE:

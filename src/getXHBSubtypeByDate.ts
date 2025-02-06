@@ -19,8 +19,8 @@ export const getXHBSubtypeByDate = (
 		...getXHBSubtypeByDateDefaultOptions,
 		currentDate: new Date(),
 	}
-) => {
-	// Validate start and end as ISO strings
+): string => {
+	// Validate start and end as SQLDatetime strings
 	if (!isValidSQLDatetimeString(start)) {
 		throw new Error(
 			`Invalid start value "${start}" - must be a SQL datetime string (e.g. "YYYY-MM-DD HH:MM:SS")`
@@ -69,9 +69,8 @@ export const getXHBSubtypeByDate = (
 			return XHB_LABELS[2];
 		case ms("4h"):
 			return XHB_LABELS[4];
-		default:
-			return XHB_LABELS.X;
 	}
+	return XHB_LABELS.X;
 };
 export default getXHBSubtypeByDate;
 

@@ -46,7 +46,7 @@ export const selectBattleDetails = createSelector(
 			battleStartDate: SQLDatetimeStringToDate(battleData.start),
 			battleEndDate: SQLDatetimeStringToDate(battleData.end),
 			battleSubtype:
-				battleData.type === BATTLE_TYPE.XHB
+				Number(battleData.type) === BATTLE_TYPE.XHB
 					? getXHBSubtypeByDate(battleData.start, battleData.end)
 					: null, //	TODO: eventually this should include a guess at what subtype of major - seasonal etc (advent, winter/summer chip, spooky, etc)),
 		};
